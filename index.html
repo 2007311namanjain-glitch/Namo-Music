@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHONK STUDIO - AI Music Generator</title>
+    <title>NAMO MUSIC - AI Music Generator</title>
     <style>
         * {
             margin: 0;
@@ -13,14 +13,14 @@
 
         body {
             font-family: 'Rajdhani', 'Segoe UI', sans-serif;
-            background: #0a0a0a;
+            background: #06060c;
             color: #fff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-image: radial-gradient(ellipse at 20% 50%, rgba(180, 0, 0, 0.15) 0%, transparent 50%),
-                              radial-gradient(ellipse at 80% 20%, rgba(100, 0, 255, 0.1) 0%, transparent 50%);
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 242, 254, 0.12) 0%, transparent 50%),
+                              radial-gradient(ellipse at 80% 20%, rgba(79, 172, 254, 0.1) 0%, transparent 50%);
         }
 
         .container {
@@ -30,38 +30,44 @@
             padding: 30px 20px;
         }
 
+        /* === GRADIENT LOGO STYLING === */
         .logo h1 {
             font-family: 'Orbitron', 'Impact', sans-serif;
-            font-size: 2.8rem;
+            font-size: 3.2rem;
+            font-weight: 900;
             margin-bottom: 8px;
-            text-shadow: 0 0 20px rgba(255, 50, 50, 0.5);
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
 
         .glow {
-            color: #ff3333;
-            animation: glow-pulse 2s infinite;
+            animation: glow-pulse 3s infinite alternate;
         }
 
         @keyframes glow-pulse {
-            0%, 100% { text-shadow: 0 0 10px #ff3333, 0 0 20px #ff3333; }
-            50% { text-shadow: 0 0 20px #ff3333, 0 0 40px #ff3333, 0 0 60px #ff3333; }
+            0% { filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.4)); }
+            100% { filter: drop-shadow(0 0 25px rgba(79, 172, 254, 0.8)); }
         }
 
         .tagline {
-            color: #777;
-            font-size: 1.1rem;
+            color: #6c7a89;
+            font-size: 1rem;
             margin-bottom: 30px;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             text-transform: uppercase;
+            font-weight: 600;
         }
 
         .auth-box {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            border-radius: 24px;
             padding: 30px 25px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
 
         .tabs {
@@ -73,21 +79,22 @@
         .tab {
             flex: 1;
             padding: 12px;
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             color: #888;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 700;
-            border-radius: 10px;
-            transition: all 0.3s;
+            border-radius: 12px;
+            transition: all 0.3s ease;
         }
 
         .tab.active {
-            background: #ff3333;
-            color: #fff;
-            border-color: #ff3333;
-            box-shadow: 0 0 15px rgba(255, 50, 50, 0.3);
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            color: #000;
+            border-color: transparent;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            font-weight: 800;
         }
 
         .auth-form {
@@ -102,31 +109,33 @@
 
         .auth-form input {
             padding: 14px 18px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
             color: #fff;
             font-size: 1rem;
-            transition: border 0.3s;
+            transition: all 0.3s;
         }
 
         .auth-form input:focus {
             outline: none;
-            border-color: #ff3333;
+            border-color: #00f2fe;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
         }
 
         .auth-form input::placeholder {
-            color: #555;
+            color: #444;
         }
 
         .btn-primary {
             padding: 14px;
-            background: linear-gradient(135deg, #ff3333, #cc0000);
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
             border: none;
-            border-radius: 10px;
-            color: #fff;
+            border-radius: 12px;
+            color: #000;
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.3s;
             letter-spacing: 1px;
@@ -134,7 +143,7 @@
 
         .btn-primary:hover {
             transform: scale(1.02);
-            box-shadow: 0 0 20px rgba(255, 50, 50, 0.4);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
         }
 
         .features {
@@ -148,55 +157,62 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #999;
+            color: #aaa;
             font-size: 0.95rem;
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 8px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            text-align: left;
         }
 
         .feature-icon {
-            font-size: 1.4rem;
-            min-width: 30px;
+            font-size: 1.3rem;
+            min-width: 25px;
+            text-align: center;
         }
 
         .error {
-            background: rgba(255, 0, 0, 0.15);
+            background: rgba(255, 51, 51, 0.1);
             border: 1px solid #ff3333;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
             color: #ff6666;
             font-size: 0.9rem;
+            text-align: left;
         }
 
         .success-msg {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #33ff33;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            color: #66ff66;
+            background: rgba(51, 255, 119, 0.1);
+            border: 1px solid #33ff77;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            color: #66ff99;
             font-size: 0.9rem;
+            text-align: left;
         }
 
         footer {
-            margin-top: 30px;
+            margin-top: 40px;
             color: #444;
             font-size: 0.85rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
             padding-top: 20px;
         }
 
         .brand {
-            color: #ff3333;
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             font-weight: 700;
         }
 
-        /* Responsive */
+        /* Responsive Fixes */
         @media (max-width: 400px) {
             .logo h1 {
-                font-size: 2rem;
+                font-size: 2.4rem;
             }
             .auth-box {
                 padding: 20px 15px;
@@ -207,12 +223,11 @@
 <body>
     <div class="container">
         <div class="logo">
-            <h1>🎵 <span class="glow">PHONK</span> STUDIO</h1>
-            <p class="tagline">🔥 AI Music Generator 🔥</p>
+            <h1 class="glow">NAMO MUSIC</h1>
+            <p class="tagline"> AI Music Generator </p>
         </div>
 
         <div class="auth-box">
-            <!-- ERROR MESSAGE SHOW -->
             <div id="errorBox" class="error" style="display:none;"></div>
             <div id="successBox" class="success-msg" style="display:none;"></div>
 
@@ -221,44 +236,42 @@
                 <button class="tab" onclick="switchTab('signup')">Sign Up</button>
             </div>
 
-            <!-- LOGIN FORM -->
             <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
                 <input type="text" id="loginUser" placeholder="Username" required>
                 <input type="password" id="loginPass" placeholder="Password" required>
-                <button type="submit" class="btn-primary">🔥 Login</button>
+                <button type="submit" class="btn-primary"> Enter Studio</button>
             </form>
 
-            <!-- SIGNUP FORM -->
             <form id="signup-form" class="auth-form" onsubmit="handleSignup(event)">
                 <input type="text" id="signupUser" placeholder="Choose Username" required minlength="3">
-                <input type="email" id="signupEmail" placeholder="Email" required>
+                <input type="email" id="signupEmail" placeholder="Email Address" required>
                 <input type="password" id="signupPass" placeholder="Password (min 6 chars)" required minlength="6">
-                <button type="submit" class="btn-primary">🚀 Create Account</button>
+                <button type="submit" class="btn-primary"> Create Account</button>
             </form>
 
             <div class="features">
                 <div class="feature">
-                    <span class="feature-icon">🎧</span>
-                    <span>Phonk • Trap • Lo-fi • Drift Phonk</span>
+                    <span class="feature-icon"></span>
+                    <span>Phonk � Trap � Lo-fi � Drift Phonk</span>
                 </div>
                 <div class="feature">
-                    <span class="feature-icon">🤖</span>
+                    <span class="feature-icon"></span>
                     <span>Powered by Udio + Suno AI + MusicGen</span>
                 </div>
                 <div class="feature">
-                    <span class="feature-icon">©️</span>
-                    <span>Copyright Reserved — Your Music</span>
+                    <span class="feature-icon">�</span>
+                    <span>Copyright Reserved � Full Ownership of Tracks</span>
                 </div>
                 <div class="feature">
-                    <span class="feature-icon">💾</span>
-                    <span>Login Info Safe — Local Storage</span>
+                    <span class="feature-icon"></span>
+                    <span>Secure Local Storage Authentication</span>
                 </div>
             </div>
         </div>
 
         <footer>
-            <p>© 2026 <span class="brand">PHONK STUDIO</span> — All Rights Reserved</p>
-            <p style="font-size:0.75rem; margin-top:5px;">Made with 🔥 for khatarnak beats</p>
+            <p>� 2026 <span class="brand">NAMO MUSIC</span> � All Rights Reserved</p>
+            <p style="font-size:0.75rem; margin-top:5px; color:#555;">Made with  for khatarnak beats</p>
         </footer>
     </div>
 
@@ -309,14 +322,14 @@
 
             // Check username
             if (users.find(u => u.username === username)) {
-                errorBox.textContent = '❌ Username already exists!';
+                errorBox.textContent = ' Username already exists!';
                 errorBox.style.display = 'block';
                 return;
             }
 
             // Check email
             if (users.find(u => u.email === email)) {
-                errorBox.textContent = '❌ Email already registered!';
+                errorBox.textContent = ' Email already registered!';
                 errorBox.style.display = 'block';
                 return;
             }
@@ -325,13 +338,13 @@
             users.push({
                 username: username,
                 email: email,
-                password: password, // Note: In real app, hash this
+                password: password,
                 created: new Date().toISOString(),
                 tracks: []
             });
             saveUsers(users);
 
-            successBox.textContent = '✅ Account created! Now login.';
+            successBox.textContent = ' Account created successfully! Switching to Login...';
             successBox.style.display = 'block';
 
             // Clear form
@@ -340,7 +353,7 @@
             document.getElementById('signupPass').value = '';
 
             // Switch to login tab after 1 sec
-            setTimeout(() => switchTab('login'), 1000);
+            setTimeout(() => switchTab('login'), 1200);
         }
 
         // ===================== LOGIN =====================
@@ -356,7 +369,7 @@
             const user = users.find(u => u.username === username && u.password === password);
 
             if (!user) {
-                errorBox.textContent = '❌ Invalid username or password!';
+                errorBox.textContent = ' Invalid username or password!';
                 errorBox.style.display = 'block';
                 return;
             }
@@ -364,12 +377,9 @@
             // Set current user
             localStorage.setItem('phonkCurrentUser', JSON.stringify(user));
 
-            // Redirect to dashboard
+            // Redirect to dashboard page
             window.location.href = 'dashboard.html';
         }
-
-        // ===================== CHECK IF ALREADY LOGGED IN =====================
-        // (Will be handled by dashboard page)
     </script>
 </body>
 </html>

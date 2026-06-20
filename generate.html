@@ -3,12 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generate - PHONK STUDIO</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <title>Generate - NAMO MUSIC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+            background: #06060c;
+            color: #fff;
+            min-height: 100vh;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 242, 254, 0.08) 0%, transparent 50%);
+        }
+
+        /* === NAVBAR === */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #aaa;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #00f2fe;
+            background: rgba(0, 242, 254, 0.1);
+        }
+
+        .user-badge {
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 242, 254, 0.1);
+            border-radius: 20px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            padding: 7px 16px;
+            background: transparent;
+            border: 1px solid #4facfe;
+            border-radius: 8px;
+            color: #4facfe;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            color: #000;
+            border-color: transparent;
+        }
+
+        /* === GENERATE INTERFACE === */
+        .generate-container {
+            max-width: 750px;
+            margin: 40px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(0, 242, 254, 0.1);
+            border-radius: 24px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.3rem;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #6c7a89;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .gen-form {
+            text-align: left;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #00f2fe;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        /* Styles Selection */
+        .style-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .style-btn {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #aaa;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .style-btn:hover {
+            border-color: #00f2fe;
+            color: #fff;
+        }
+
+        .style-btn.active {
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            color: #000;
+            border-color: transparent;
+            font-weight: 800;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* Custom Input Space */
+        .custom-style-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .custom-style-input:focus {
+            outline: none;
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+        }
+
+        /* Inputs text fields */
+        textarea, select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s;
+            resize: none;
+        }
+
+        textarea:focus, select:focus {
+            outline: none;
+            border-color: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+        }
+
+        .prompt-hints {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hint:hover {
+            color: #00f2fe;
+            background: rgba(0, 242, 254, 0.05);
+        }
+
+        /* Buttons Configuration */
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00f2fe, #4facfe);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: scale(1.01);
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Utility States */
+        .hidden { display: none !important; }
+
+        #loading {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.05);
+            border-top: 4px solid #00f2fe;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #result {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0, 242, 254, 0.03);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: 16px;
+        }
+
+        #result h3 { color: #33ff77; margin-bottom: 10px; font-size: 1.1rem; }
+
+        audio { width: 100%; margin: 15px 0; border-radius: 8px; }
+
+        .result-actions { display: flex; gap: 10px; }
+
+        .btn-download, .btn-save {
+            flex: 1; padding: 12px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-download { background: rgba(255,255,255,0.08); color: #fff; }
+        .btn-save { background: linear-gradient(135deg, #33ff77, #00cc55); color: #000; }
+        .btn-download:hover { background: rgba(255,255,255,0.15); }
+        .btn-save:hover { box-shadow: 0 0 15px rgba(51,255,119,0.4); }
+
+        #error {
+            margin-top: 20px; padding: 12px; background: rgba(255,51,51,0.1); border: 1px solid #ff3333; color: #ff6666; border-radius: 12px; font-size: 0.9rem;
+        }
+
+        .copyright-note { margin-top: 20px; color: #444; font-size: 0.8rem; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand">🎵 PHONK STUDIO</div>
+        <div class="nav-brand">🎵 NAMO MUSIC</div>
         <div class="nav-links">
             <a href="/dashboard">Dashboard</a>
             <a href="/generate" class="active">Generate</a>
@@ -19,20 +312,20 @@
     </nav>
     
     <div class="generate-container">
-        <h1>🎧 AI Music Generator</h1>
-        <p class="subtitle">Apni text prompt se khatarnak music banao!</p>
+        <h1>🎧 AI Music Workshop</h1>
+        <p class="subtitle">Apni text prompt aur style se khatarnak tracks banao!</p>
         
         <div class="gen-form">
             <div class="form-group">
-                <label>Music Style</label>
+                <label>Music Style Select / Type Custom Space</label>
                 <div class="style-grid">
-                    <button class="style-btn active" data-style="phonk">PHONK 🔥</button>
-                    <button class="style-btn" data-style="trap">TRAP</button>
-                    <button class="style-btn" data-style="lo-fi">LO-FI</button>
-                    <button class="style-btn" data-style="drift">DRIFT PHONK</button>
-                    <button class="style-btn" data-style="house">HOUSE</button>
-                    <button class="style-btn" data-style="custom">CUSTOM</button>
+                    <button class="style-btn active" data-style="phonk" onclick="clearCustomStyle()">PHONK 🔥</button>
+                    <button class="style-btn" data-style="trap" onclick="clearCustomStyle()">TRAP</button>
+                    <button class="style-btn" data-style="lo-fi" onclick="clearCustomStyle()">LO-FI</button>
+                    <button class="style-btn" data-style="drift" onclick="clearCustomStyle()">DRIFT PHONK</button>
+                    <button class="style-btn" data-style="house" onclick="clearCustomStyle()">HOUSE</button>
                 </div>
+                <input type="text" id="customStyleText" class="custom-style-input" placeholder="Or type your own custom style here... (e.g. Hardcore Metal, Indian Classical Beats)" oninput="selectCustomMode()">
             </div>
             
             <div class="form-group">
@@ -49,8 +342,8 @@
                 <label>AI Model</label>
                 <select id="model">
                     <option value="auto">Auto (Best Available)</option>
-                    <option value="udio">Udio (Free - 1200/mo)</option>
-                    <option value="suno">Suno AI (v5.5 - Premium Quality)</option>
+                    <option value="udio">Udio (Free tier)</option>
+                    <option value="suno">Suno AI (v5.5 Ultra)</option>
                 </select>
             </div>
             
@@ -70,7 +363,7 @@
                     <button onclick="downloadAudio()" class="btn-download">⬇️ Download</button>
                     <button onclick="saveToLibrary()" class="btn-save">💾 Save to Library</button>
                 </div>
-                <p class="copyright-note">© 2026 PHONK STUDIO — All Rights Reserved</p>
+                <p class="copyright-note">© 2026 NAMO MUSIC — All Rights Reserved</p>
             </div>
             
             <div id="error" class="hidden"></div>
@@ -79,13 +372,25 @@
     
     <script>
         let currentResult = null;
-        
+        let activeStyleMode = 'phonk';
+
         document.querySelectorAll('.style-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
+                activeStyleMode = this.dataset.style;
             });
         });
+
+        function selectCustomMode() {
+            // Deselect grid buttons if user starts typing in custom input field box
+            document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+            activeStyleMode = 'custom';
+        }
+
+        function clearCustomStyle() {
+            document.getElementById('customStyleText').value = '';
+        }
         
         function useHint(text) {
             document.getElementById('prompt').value = text;
@@ -93,7 +398,10 @@
         
         async function generateMusic() {
             const prompt = document.getElementById('prompt').value;
-            const style = document.querySelector('.style-btn.active').dataset.style;
+            const customInput = document.getElementById('customStyleText').value.trim();
+            
+            // Assign custom input text if active mode is set to written field space
+            const chosenStyle = (activeStyleMode === 'custom' && customInput !== '') ? customInput : activeStyleMode;
             const model = document.getElementById('model').value;
             
             if (!prompt) {
@@ -111,7 +419,7 @@
                 const response = await fetch('/generate', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({prompt, style, model})
+                    body: JSON.stringify({prompt, style: chosenStyle, model})
                 });
                 
                 const data = await response.json();
@@ -124,7 +432,7 @@
                     document.getElementById('audioPlayer').play();
                 } else {
                     document.getElementById('error').classList.remove('hidden');
-                    document.getElementById('error').textContent = 'Error: ' + (data.error || 'API key nahi lagi. UdioAPI.pro se free key le!');
+                    document.getElementById('error').textContent = 'Error: ' + (data.error || 'Server structure breakdown. API Configuration check kijiye.');
                 }
             } catch (err) {
                 document.getElementById('loading').classList.add('hidden');
@@ -140,7 +448,7 @@
             if (currentResult && currentResult.audio_url) {
                 const a = document.createElement('a');
                 a.href = currentResult.audio_url;
-                a.download = `phonk-studio-${Date.now()}.mp3`;
+                a.download = `namo-music-${Date.now()}.mp3`;
                 a.click();
             }
         }
