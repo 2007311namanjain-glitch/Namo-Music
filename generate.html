@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate - PHONK STUDIO</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">🎵 PHONK STUDIO</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/generate" class="active">Generate</a>
+            <a href="/library">My Library</a>
+            <span class="user-badge">👤 {{ session.username }}</span>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="generate-container">
+        <h1>🎧 AI Music Generator</h1>
+        <p class="subtitle">Apni text prompt se khatarnak music banao!</p>
+        
+        <div class="gen-form">
+            <div class="form-group">
+                <label>Music Style</label>
+                <div class="style-grid">
+                    <button class="style-btn active" data-style="phonk">PHONK 🔥</button>
+                    <button class="style-btn" data-style="trap">TRAP</button>
+                    <button class="style-btn" data-style="lo-fi">LO-FI</button>
+                    <button class="style-btn" data-style="drift">DRIFT PHONK</button>
+                    <button class="style-btn" data-style="house">HOUSE</button>
+                    <button class="style-btn" data-style="custom">CUSTOM</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Prompt Likh</label>
+                <textarea id="prompt" rows="4" placeholder="Example: Heavy bass phonk beat with dark atmosphere, 140 BPM, distorted 808s, aggressive cowbells..."></textarea>
+                <div class="prompt-hints">
+                    <span class="hint" onclick="useHint('Dark aggressive phonk, 160bpm, bass boosted')">Dark Phonk</span>
+                    <span class="hint" onclick="useHint('Drift phonk, cowbells, intense energy')">Drift Phonk</span>
+                    <span class="hint" onclick="useHint('Melodic lo-fi hip hop, chill beats, rain sounds')">Lo-fi</span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>AI Model</label>
+                <select id="model">
+                    <option value="auto">Auto (Best Available)</option>
+                    <option value="udio">Udio (Free - 1200/mo)</option>
+                    <option value="suno">Suno AI (v5.5 - Premium Quality)</option>
+                </select>
+            </div>
+            
+            <button onclick="generateMusic()" class="btn-generate" id="genBtn">
+                🚀 Generate Music
+            </button>
+            
+            <div id="loading" class="hidden">
+                <div class="spinner"></div>
+                <p>Generating your beat... 🔥</p>
+            </div>
+            
+            <div id="result" class="hidden">
+                <h3>✅ Generated!</h3>
+                <audio id="audioPlayer" controls></audio>
+                <div class="result-actions">
+                    <button onclick="downloadAudio()" class="btn-download">⬇️ Download</button>
+                    <button onclick="saveToLibrary()" class="btn-save">💾 Save to Library</button>
+                </div>
+                <p class="copyright-note">© 2026 PHONK STUDIO — All Rights Reserved</p>
+            </div>
+            
+            <div id="error" class="hidden"></div>
+        </div>
+    </div>
+    
+    <script>
+        let currentResult = null;
+        
+        document.querySelectorAll('.style-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        function useHint(text) {
+            document.getElementById('prompt').value = text;
+        }
+        
+        async function generateMusic() {
+            const prompt = document.getElementById('prompt').value;
+            const style = document.querySelector('.style-btn.active').dataset.style;
+            const model = document.getElementById('model').value;
+            
+            if (!prompt) {
+                alert('Pehle prompt likh bhai!');
+                return;
+            }
+            
+            document.getElementById('genBtn').disabled = true;
+            document.getElementById('genBtn').textContent = '⏳ Generating...';
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+            
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({prompt, style, model})
+                });
+                
+                const data = await response.json();
+                document.getElementById('loading').classList.add('hidden');
+                
+                if (data.success) {
+                    currentResult = data;
+                    document.getElementById('result').classList.remove('hidden');
+                    document.getElementById('audioPlayer').src = data.audio_url;
+                    document.getElementById('audioPlayer').play();
+                } else {
+                    document.getElementById('error').classList.remove('hidden');
+                    document.getElementById('error').textContent = 'Error: ' + (data.error || 'API key nahi lagi. UdioAPI.pro se free key le!');
+                }
+            } catch (err) {
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('error').classList.remove('hidden');
+                document.getElementById('error').textContent = 'Error: ' + err.message;
+            }
+            
+            document.getElementById('genBtn').disabled = false;
+            document.getElementById('genBtn').textContent = '🚀 Generate Music';
+        }
+        
+        function downloadAudio() {
+            if (currentResult && currentResult.audio_url) {
+                const a = document.createElement('a');
+                a.href = currentResult.audio_url;
+                a.download = `phonk-studio-${Date.now()}.mp3`;
+                a.click();
+            }
+        }
+        
+        function saveToLibrary() {
+            alert('✅ Track saved to your library! Check My Library page.');
+            window.location.href = '/library';
+        }
+    </script>
+</body>
+</html>

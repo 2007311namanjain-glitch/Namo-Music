@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Library - PHONK STUDIO</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">🎵 PHONK STUDIO</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/generate">Generate</a>
+            <a href="/library" class="active">My Library</a>
+            <a href="/logout" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+    
+    <div class="library-container">
+        <h1>📚 My Music Library</h1>
+        <p class="subtitle">Apne saare generated tracks — Copyright reserved with you</p>
+        
+        {% if generations %}
+        <div class="gen-grid">
+            {% for gen in generations %}
+            <div class="gen-card">
+                <div class="card-header">
+                    <h3>{{ gen.title }}</h3>
+                </div>
+                <div class="card-meta">
+                    <span class="tag style-tag">{{ gen.style }}</span>
+                    <span class="tag model-tag">{{ gen.model_used }}</span>
+                </div>
+                <div class="card-prompt">{{ gen.prompt[:60] }}{% if gen.prompt|length > 60 %}...{% endif %}</div>
+                {% if gen.audio_url %}
+                <audio controls>
+                    <source src="{{ gen.audio_url }}" type="audio/mpeg">
+                </audio>
+                {% endif %}
+                <div class="card-footer">
+                    <span>{{ gen.created_at.strftime('%d %b %Y') }}</span>
+                    <span class="copyright-badge">©️ Reserved</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">🎵</div>
+            <h3>No tracks yet!</h3>
+            <p>Pehla track generate karo!</p>
+            <a href="/generate" class="btn-primary">Generate Now 🚀</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
