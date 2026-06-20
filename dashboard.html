@@ -3,458 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - PHONK STUDIO</title>
+    <title>NM Studio - Control Dashboard</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-main: #070312;
+            --accent-purple: #8a2be2;
+            --accent-glow: #bf55ec;
+            --text-main: #f5f6fa;
+            --text-muted: #9a90b0;
         }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body {
-            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
-            background: #0a0a0a;
-            color: #fff;
-            min-height: 100vh;
-            background-image: radial-gradient(ellipse at 20% 50%, rgba(180, 0, 0, 0.08) 0%, transparent 50%);
+            background: linear-gradient(135deg, var(--bg-main) 0%, #11052c 60%, #1d093a 100%);
+            color: var(--text-main); min-height: 100vh; position: relative; padding-bottom: 40px;
         }
-
-        /* === NAVBAR === */
+        body::before {
+            content: "NM"; position: fixed; bottom: -30px; right: -10px; font-size: 32vw; font-weight: 900;
+            color: rgba(138, 43, 226, 0.02); z-index: -1; pointer-events: none; font-family: 'Impact', sans-serif;
+        }
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background: rgba(0, 0, 0, 0.9);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            flex-wrap: wrap;
-            gap: 10px;
+            display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;
+            background: rgba(7, 3, 18, 0.8); border-bottom: 1px solid rgba(138, 43, 226, 0.2);
         }
-
-        .nav-brand {
-            font-family: 'Orbitron', 'Impact', sans-serif;
-            font-size: 1.4rem;
-            color: #ff3333;
-            letter-spacing: 1px;
+        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 25px; font-weight: 600; }
+        .grid-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .premium-card {
+            background: rgba(20, 11, 38, 0.6); backdrop-filter: blur(12px);
+            border: 1px solid rgba(138, 43, 226, 0.18); border-radius: 16px; padding: 35px;
         }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .nav-links a {
-            color: #aaa;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 6px 12px;
-            border-radius: 6px;
-            transition: all 0.3s;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: #ff3333;
-            background: rgba(255, 50, 50, 0.1);
-        }
-
-        .user-badge {
-            padding: 6px 14px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            color: #fff;
-            font-size: 0.9rem;
-        }
-
-        .btn-logout {
-            padding: 7px 16px;
-            background: transparent;
-            border: 1px solid #ff3333;
-            border-radius: 8px;
-            color: #ff3333;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .btn-logout:hover {
-            background: #ff3333;
-            color: #fff;
-        }
-
-        /* === DASHBOARD === */
-        .dashboard-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        .welcome-section {
-            margin-bottom: 30px;
-        }
-
-        .welcome-section h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .highlight {
-            color: #ff3333;
-        }
-
-        .welcome-section p {
-            color: #888;
-            margin-top: 5px;
-        }
-
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #ff3333;
-            font-family: 'Orbitron', monospace;
-        }
-
-        .stat-label {
-            color: #888;
-            font-size: 0.85rem;
-            margin-top: 5px;
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .action-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            text-decoration: none;
-            color: #fff;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .action-card:hover {
-            border-color: #ff3333;
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(255, 50, 50, 0.15);
-        }
-
-        .action-icon {
-            font-size: 2.5rem;
-            margin-bottom: 12px;
-        }
-
-        .action-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 6px;
-        }
-
-        .action-card p {
-            color: #888;
-            font-size: 0.85rem;
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-            border-left: 3px solid #ff3333;
-            padding-left: 12px;
-        }
-
-        .gen-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-
-        .gen-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 18px;
-            transition: all 0.3s;
-        }
-
-        .gen-card:hover {
-            border-color: rgba(255, 50, 50, 0.3);
-        }
-
-        .gen-title {
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-
-        .gen-meta {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .gen-style, .gen-model {
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .gen-style {
-            background: rgba(255, 50, 50, 0.2);
-            color: #ff6666;
-        }
-
-        .gen-model {
-            background: rgba(100, 50, 255, 0.2);
-            color: #9966ff;
-        }
-
-        .gen-card audio {
-            width: 100%;
-            margin: 8px 0;
-            height: 40px;
-        }
-
-        .gen-date {
-            color: #555;
-            font-size: 0.78rem;
-            margin-top: 6px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: #666;
-        }
-
-        .empty-state .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 15px;
-        }
-
-        .empty-state h3 {
-            color: #888;
-            margin-bottom: 10px;
-        }
-
-        .empty-state a {
-            color: #ff3333;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .btn-primary-sm {
-            display: inline-block;
-            padding: 10px 25px;
-            background: linear-gradient(135deg, #ff3333, #cc0000);
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 700;
-            text-decoration: none;
-            margin-top: 15px;
-            transition: all 0.3s;
-        }
-
-        .btn-primary-sm:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 50, 50, 0.3);
-        }
-
-        .dashboard-footer {
-            text-align: center;
-            padding: 20px;
-            color: #444;
-            font-size: 0.85rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
-            margin-top: 40px;
-        }
-
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 12px 15px;
-                flex-direction: column;
-                text-align: center;
-            }
-            .nav-links {
-                justify-content: center;
-            }
-            .welcome-section h2 {
-                font-size: 1.4rem;
-            }
-        }
+        .pulse-text { background: linear-gradient(90deg, var(--accent-purple), #ff79c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+        .track-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 25px; }
+        .track-node { background: rgba(0,0,0,0.4); border: 1px solid rgba(138, 43, 226, 0.15); border-radius: 8px; padding: 20px; }
+        audio { width: 100%; margin-top: 15px; }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-brand">🎵 PHONK STUDIO</div>
+        <h2 class="pulse-text" style="font-weight:800; letter-spacing:1px;">NM STUDIO</h2>
         <div class="nav-links">
-            <a href="dashboard.html" class="active">Dashboard</a>
-            <a href="generate.html">Generate</a>
-            <a href="library.html">My Library</a>
-            <span class="user-badge" id="userBadge">👤 Loading...</span>
-            <button class="btn-logout" onclick="handleLogout()">Logout</button>
+            <a href="dashboard.html" style="color: var(--accent-glow);">Dashboard</a>
+            <a href="generate.html">AI Workshop</a>
+            <a href="library.html">Vault Nodes</a>
+            <a onclick="localStorage.removeItem('phonkCurrentUser'); window.location.href='index.html';" style="cursor:pointer; margin-left:20px; color:#ff4b4b;">Logout</a>
         </div>
     </nav>
 
-    <div class="dashboard-container">
-        <div class="welcome-section">
-            <h2>Welcome back, <span class="highlight" id="userName">User</span> 🔥</h2>
-            <p>Ready to create some khatarnak beats?</p>
+    <div class="grid-container">
+        <div class="premium-card">
+            <h3>User Node Protocol: <span id="userDisplay" style="color: var(--accent-glow);">...</span></h3>
+            <p style="color: #4ade80; margin-top: 10px; font-weight: bold;">System State: Operational Layer Verified ✓</p>
         </div>
 
-        <!-- Stats -->
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-number" id="totalTracks">0</div>
-                <div class="stat-label">Total Tracks</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="totalStyles">0</div>
-                <div class="stat-label">Styles Used</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="memberSince">—</div>
-                <div class="stat-label">Member Since</div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <a href="generate.html" class="action-card">
-                <div class="action-icon">🎧</div>
-                <h3>Generate Music</h3>
-                <p>Text se khatarnak music banao</p>
-            </a>
-            <a href="library.html" class="action-card">
-                <div class="action-icon">📚</div>
-                <h3>My Library</h3>
-                <p>Apne saare tracks yahan dekho</p>
-            </a>
-        </div>
-
-        <!-- Recent Generations -->
-        <h3 class="section-title">🎵 Recent Tracks</h3>
-        <div id="recentContainer">
-            <div class="empty-state">
-                <div class="empty-icon">🎵</div>
-                <h3>No tracks yet!</h3>
-                <p>Pehla track generate karo 🔥</p>
-                <a href="generate.html" class="btn-primary-sm">🚀 Generate Now</a>
-            </div>
-        </div>
+        <h3 style="margin-top: 40px; border-left: 4px solid var(--accent-purple); padding-left: 15px;">Recent Cache Generation Pulses</h3>
+        <div id="recentGrid"></div>
     </div>
 
-    <footer class="dashboard-footer">
-        <p>© 2026 <span style="color:#ff3333;font-weight:700;">PHONK STUDIO</span> — All Rights Reserved</p>
-    </footer>
-
     <script>
-        // ===================== CHECK LOGIN =====================
-        function getCurrentUser() {
-            const data = localStorage.getItem('phonkCurrentUser');
-            return data ? JSON.parse(data) : null;
-        }
+        const uStr = localStorage.getItem('phonkCurrentUser');
+        if(!uStr) window.location.href = 'index.html';
+        const user = JSON.parse(uStr);
+        document.getElementById('userDisplay').textContent = user.username.toUpperCase();
 
-        const user = getCurrentUser();
-        if (!user) {
-            window.location.href = 'index.html';
-        }
-
-        // ===================== SET USER INFO =====================
-        document.getElementById('userName').textContent = user.username.charAt(0).toUpperCase() + user.username.slice(1);
-        document.getElementById('userBadge').textContent = '👤 ' + user.username;
-
-        const createdDate = new Date(user.created);
-        document.getElementById('memberSince').textContent = 
-            createdDate.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' });
-
-        // ===================== LOAD TRACKS =====================
-        function getUserTracks() {
-            return user.tracks || [];
-        }
-
-        function loadDashboard() {
-            const tracks = getUserTracks();
-            
-            // Stats
-            document.getElementById('totalTracks').textContent = tracks.length;
-            const styles = [...new Set(tracks.map(t => t.style))];
-            document.getElementById('totalStyles').textContent = styles.length;
-
-            // Recent tracks
-            const container = document.getElementById('recentContainer');
-            
-            if (tracks.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">🎵</div>
-                        <h3>No tracks yet!</h3>
-                        <p>Pehla track generate karo 🔥</p>
-                        <a href="generate.html" class="btn-primary-sm">🚀 Generate Now</a>
-                    </div>
-                `;
-                return;
-            }
-
-            // Show last 6 tracks
-            const recent = tracks.slice(-6).reverse();
-            let html = '<div class="gen-grid">';
-            
-            recent.forEach(track => {
+        const tracks = user.tracks || [];
+        const container = document.getElementById('recentGrid');
+        if(tracks.length === 0) {
+            container.innerHTML = `<p style='margin-top:20px; color:var(--text-muted);'>No compilation logs recorded. Go to AI Workshop to run generation sequence.</p>`;
+        } else {
+            let html = '<div class="track-grid">';
+            tracks.slice(-6).reverse().forEach(t => {
                 html += `
-                    <div class="gen-card">
-                        <div class="gen-title">${track.title || 'Untitled'}</div>
-                        <div class="gen-meta">
-                            <span class="gen-style">${track.style || 'custom'}</span>
-                            <span class="gen-model">${track.model || 'AI'}</span>
-                        </div>
-                        ${track.audioUrl ? `<audio controls><source src="${track.audioUrl}" type="audio/mpeg"></audio>` : ''}
-                        <div class="gen-date">${new Date(track.created).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
-                    </div>
-                `;
+                    <div class="track-node">
+                        <h4 style="color:var(--accent-glow);">${t.title}</h4>
+                        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Style: ${t.style} | API Matrix Client</p>
+                        <audio controls src="${t.audioUrl}"></audio>
+                    </div>`;
             });
-
             html += '</div>';
             container.innerHTML = html;
         }
-
-        // ===================== LOGOUT =====================
-        function handleLogout() {
-            localStorage.removeItem('phonkCurrentUser');
-            window.location.href = 'index.html';
-        }
-
-        // ===================== INIT =====================
-        loadDashboard();
     </script>
 </body>
 </html>
