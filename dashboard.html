@@ -6,55 +6,51 @@
     <title>NM Studio - Control Dashboard</title>
     <style>
         :root {
-            --bg-main: #070312;
-            --accent-purple: #8a2be2;
-            --accent-glow: #bf55ec;
+            --bg-main: #04010a;
+            --accent-purple: #7b1fa2;
+            --accent-glow: #e040fb;
             --text-main: #f5f6fa;
-            --text-muted: #9a90b0;
+            --text-muted: #a29bfe;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body {
-            background: linear-gradient(135deg, var(--bg-main) 0%, #11052c 60%, #1d093a 100%);
+            background: linear-gradient(135deg, var(--bg-main) 0%, #0d041a 60%, #1a0833 100%);
             color: var(--text-main); min-height: 100vh; position: relative; padding-bottom: 40px;
         }
-        body::before {
-            content: "NM"; position: fixed; bottom: -30px; right: -10px; font-size: 32vw; font-weight: 900;
-            color: rgba(138, 43, 226, 0.02); z-index: -1; pointer-events: none; font-family: 'Impact', sans-serif;
-        }
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;
-            background: rgba(7, 3, 18, 0.8); border-bottom: 1px solid rgba(138, 43, 226, 0.2);
-        }
-        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 25px; font-weight: 600; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(4, 1, 10, 0.85); border-bottom: 1px solid rgba(224, 64, 251, 0.2); backdrop-filter: blur(10px); }
+        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 25px; font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent-glow); text-shadow: 0 0 8px var(--accent-glow); }
         .grid-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .premium-card {
-            background: rgba(20, 11, 38, 0.6); backdrop-filter: blur(12px);
-            border: 1px solid rgba(138, 43, 226, 0.18); border-radius: 16px; padding: 35px;
-        }
-        .pulse-text { background: linear-gradient(90deg, var(--accent-purple), #ff79c6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
-        .track-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 25px; }
-        .track-node { background: rgba(0,0,0,0.4); border: 1px solid rgba(138, 43, 226, 0.15); border-radius: 8px; padding: 20px; }
+        .premium-card { background: rgba(20, 11, 38, 0.65); backdrop-filter: blur(12px); border: 1px solid rgba(224, 64, 251, 0.2); border-radius: 16px; padding: 35px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); position: relative; overflow: hidden; }
+        .pulse-text { background: linear-gradient(90deg, var(--accent-glow), #00e5ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: bold; }
+        .track-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 25px; }
+        .track-node { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 20px; transition: 0.3s; }
+        .track-node:hover { transform: translateY(-3px); border-color: var(--accent-glow); }
         audio { width: 100%; margin-top: 15px; }
+        .pro-badge-reserve { position: absolute; top: 15px; right: 15px; background: linear-gradient(45deg, #ffd700, #ff8c00); color: black; font-size: 0.75rem; padding: 4px 10px; font-weight: bold; border-radius: 30px; letter-spacing: 1px; box-shadow: 0 0 10px rgba(255,215,0,0.4); display: inline-block; }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <h2 class="pulse-text" style="font-weight:800; letter-spacing:1px;">NM STUDIO</h2>
+        <h2 class="pulse-text" style="font-weight:800; letter-spacing:1px;">NM STUDIO 🌌</h2>
         <div class="nav-links">
-            <a href="dashboard.html" style="color: var(--accent-glow);">Dashboard</a>
-            <a href="generate.html">AI Workshop</a>
+            <a href="dashboard.html" style="color: var(--accent-glow);">Dashboard Hub</a>
+            <a href="generate.html">Audio Lab Terminal</a>
+            <a href="video.html">Gemini Visual Compiler</a>
             <a href="library.html">Vault Nodes</a>
-            <a onclick="localStorage.removeItem('phonkCurrentUser'); window.location.href='index.html';" style="cursor:pointer; margin-left:20px; color:#ff4b4b;">Logout</a>
+            <a href="index.html" style="color:#ff4b4b;" onclick="localStorage.removeItem('phonkCurrentUser')">Disconnect</a>
         </div>
     </nav>
 
     <div class="grid-container">
         <div class="premium-card">
-            <h3>User Node Protocol: <span id="userDisplay" style="color: var(--accent-glow);">...</span></h3>
-            <p style="color: #4ade80; margin-top: 10px; font-weight: bold;">System State: Operational Layer Verified ✓</p>
+            <div class="pro-badge-reserve">FUTURE PAID RESERVED NODE</div>
+            
+            <h1 style="font-size: 2.3rem; font-weight: 800;" id="dynamicGreeting">System Initializing...</h1>
+            <p style="color: #4ade80; margin-top: 15px; font-weight: bold; font-size:1.1rem;">System State: Operational Layer Verified ✓</p>
         </div>
 
-        <h3 style="margin-top: 40px; border-left: 4px solid var(--accent-purple); padding-left: 15px;">Recent Cache Generation Pulses</h3>
+        <h3 style="margin-top: 40px; border-left: 4px solid var(--accent-purple); padding-left: 15px; font-weight: 700;">Recent Architecture Pulses</h3>
         <div id="recentGrid"></div>
     </div>
 
@@ -62,19 +58,32 @@
         const uStr = localStorage.getItem('phonkCurrentUser');
         if(!uStr) window.location.href = 'index.html';
         const user = JSON.parse(uStr);
-        document.getElementById('userDisplay').textContent = user.username.toUpperCase();
+        
+        // --- AUTHENTIC RAJASTHANI TIME-BASED GREETING CALCULATOR ---
+        const hrs = new Date().getHours();
+        let greetingPrefix = "";
+        
+        if (hrs >= 4 && hrs < 12) {
+            greetingPrefix = "Khamma ghanni Sa!";
+        } else if (hrs >= 12 && hrs < 17) {
+            greetingPrefix = "Dopehar ka Sa Ram Ram!";
+        } else {
+            greetingPrefix = "Shubh Sandhya Sa! ";
+        }
+        
+        document.getElementById('dynamicGreeting').innerHTML = `${greetingPrefix} <span class='pulse-text'>${user.username.toUpperCase()}</span> Aapro Swagat Hai! 🙏🔥`;
 
         const tracks = user.tracks || [];
         const container = document.getElementById('recentGrid');
         if(tracks.length === 0) {
-            container.innerHTML = `<p style='margin-top:20px; color:var(--text-muted);'>No compilation logs recorded. Go to AI Workshop to run generation sequence.</p>`;
+            container.innerHTML = `<p style='margin-top:20px; color:var(--text-muted); font-style:italic;'>No local tracking codes recorded inside this node workspace. Jump into the Audio Lab Terminal to deploy loops.</p>`;
         } else {
             let html = '<div class="track-grid">';
             tracks.slice(-6).reverse().forEach(t => {
                 html += `
                     <div class="track-node">
-                        <h4 style="color:var(--accent-glow);">${t.title}</h4>
-                        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">Style: ${t.style} | API Matrix Client</p>
+                        <h4 style="color:var(--accent-glow); font-size:1.2rem; font-weight:700;">🎵 ${t.title}</h4>
+                        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:5px;">Vibe Profile: ${t.style} | Lab Matrix Element</p>
                         <audio controls src="${t.audioUrl}"></audio>
                     </div>`;
             });

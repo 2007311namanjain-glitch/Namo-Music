@@ -6,73 +6,64 @@
     <title>NM Studio - Secure Vault Nodes</title>
     <style>
         :root {
-            --bg-main: #070312;
-            --accent-purple: #8a2be2;
-            --accent-glow: #bf55ec;
+            --bg-main: #04010a;
+            --accent-purple: #7b1fa2;
+            --accent-glow: #e040fb;
             --text-main: #f5f6fa;
-            --text-muted: #9a90b0;
+            --text-muted: #a29bfe;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: linear-gradient(135deg, var(--bg-main) 0%, #11052c 60%, #1d093a 100%); color: var(--text-main); min-height: 100vh; position: relative; }
-        body::before {
-            content: "NM"; position: fixed; bottom: -30px; right: -10px; font-size: 32vw; font-weight: 900;
-            color: rgba(138, 43, 226, 0.02); z-index: -1; pointer-events: none; font-family: 'Impact', sans-serif;
-        }
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;
-            background: rgba(7, 3, 18, 0.8); border-bottom: 1px solid rgba(138, 43, 226, 0.2);
-        }
+        body { background: linear-gradient(135deg, var(--bg-main) 0%, #0d041a 60%, #1a0833 100%); color: var(--text-main); min-height: 100vh; position: relative; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(4, 1, 10, 0.9); border-bottom: 1px solid rgba(224, 64, 251, 0.2); }
         .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 25px; font-weight: 600; }
-        .vault-container { max-width: 1100px; margin: 40px auto; padding: 30px; background: rgba(20, 11, 38, 0.6); border-radius: 16px; border: 1px solid rgba(138, 43, 226, 0.2); }
-        .grid-system { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 25px; }
-        .node-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(138, 43, 226, 0.15); border-radius: 12px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-meta { display: flex; gap: 10px; margin: 10px 0; }
-        .tag { padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        .tag-style { background: rgba(138, 43, 226, 0.3); color: #ff79c6; }
-        .tag-device { background: rgba(191, 85, 236, 0.2); color: #00f2fe; }
+        .vault-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .grid-system { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .node-card { background: rgba(20, 11, 38, 0.6); border: 1px solid rgba(224,64,251,0.15); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; transition: 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .node-card:hover { border-color: var(--accent-glow); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(123,31,162,0.4); }
+        .card-meta { display: flex; gap: 8px; margin: 12px 0; }
+        .tag { font-size: 0.75rem; padding: 4px 10px; border-radius: 30px; font-weight: bold; text-transform: uppercase; }
+        .tag-style { background: rgba(224,64,251,0.15); color: var(--accent-glow); border: 1px solid rgba(224,64,251,0.3); }
+        .tag-device { background: rgba(0, 229, 255, 0.15); color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.3); }
         audio { width: 100%; margin-top: 15px; }
-        .card-footer { display: flex; justify-content: space-between; margin-top: 15px; font-size: 0.8rem; color: var(--text-muted); }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; font-size: 0.8rem; color: var(--text-muted); }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <h2 style="color: #ff79c6; font-weight:800;">NM STUDIO</h2>
-        <div class="nav-links"><a href="dashboard.html">Dashboard</a><a href="generate.html">AI Workshop</a><a href="library.html" style="color: var(--accent-glow);">Vault Nodes</a></div>
+        <h2 style="color: #e040fb; font-weight:800;">NM VAULT </h2>
+        <div class="nav-links"><a href="dashboard.html">Dashboard</a><a href="generate.html">Audio Lab</a><a href="video.html">Visual Compiler</a><a href="library.html" style="color: var(--accent-glow)">Vault Nodes</a></div>
     </nav>
 
     <div class="vault-container">
-        <h2 style="color: var(--accent-glow);"> SECURED CLOUD VAULT STORAGE</h2>
-        <p style="color: var(--text-muted);">Dynamic Synchronization Node Verification Logs</p>
-        
+        <h2 style="margin-bottom: 35px; color: #fff; font-weight: 800; letter-spacing: 1px;"> SECURED ENCRYPTED CLOUD VAULT NODES</h2>
         <div id="vaultGrid"></div>
     </div>
 
     <script>
         const uStr = localStorage.getItem('phonkCurrentUser');
-        if(!uStr) window.location.href = 'index.html';
         const user = JSON.parse(uStr);
         const container = document.getElementById('vaultGrid');
-
         const tracks = user.tracks || [];
+
         if(tracks.length === 0) {
-            container.innerHTML = `<p style="text-align:center; padding:40px; color:var(--text-muted);">No commit nodes initialized inside your cloud framework database.</p>`;
+            container.innerHTML = `<p style="text-align:center; padding:40px; color:var(--text-muted); font-style:italic;">No commit nodes initialized inside your cloud framework database serverless logs.</p>`;
         } else {
             let html = '<div class="grid-system">';
             tracks.forEach(t => {
                 html += `
                     <div class="node-card">
                         <div>
-                            <h3 style="color:#fff;">${t.title}</h3>
+                            <h3 style="color:#fff; font-size:1.25rem; font-weight:700;"> ${t.title}</h3>
                             <div class="card-meta">
                                 <span class="tag tag-style">${t.style}</span>
                                 <span class="tag tag-device">Live Vault Sync</span>
                             </div>
-                            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.4;">${t.prompt}</p>
+                            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.4; font-style:italic;">"${t.prompt}"</p>
                         </div>
                         <audio controls src="${t.audioUrl}"></audio>
                         <div class="card-footer">
-                            <span>${new Date(t.created).toLocaleDateString('en-IN')}</span>
-                            <span style="color:#ff79c6; font-weight:bold;">© NM Reserved</span>
+                            <span>Deployed: ${new Date(t.created).toLocaleDateString('en-IN')}</span>
+                            <span style="color:#e040fb; font-weight:bold; letter-spacing:1px;">© NM RESERVED</span>
                         </div>
                     </div>`;
             });
@@ -82,4 +73,3 @@
     </script>
 </body>
 </html>
-

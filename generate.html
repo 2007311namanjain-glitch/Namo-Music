@@ -3,207 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NM Studio - AI Core Generator</title>
+    <title>NM Studio - Audio Lab Core</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
         :root {
-            --bg-main: #070312;
-            --accent-purple: #8a2be2;
-            --accent-glow: #bf55ec;
+            --mesh-gradient: linear-gradient(135deg, #030107 0%, #0f0426 40%, #26073d 100%);
+            --neon-cyan: #00f2fe;
+            --neon-magenta: #e040fb;
+            --glass-box: rgba(12, 6, 28, 0.75);
             --text-main: #f5f6fa;
-            --text-muted: #9a90b0;
+            --text-muted: #a29bfe;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body {
-            background: linear-gradient(135deg, var(--bg-main) 0%, #11052c 60%, #1d093a 100%);
-            color: var(--text-main); min-height: 100vh; position: relative;
-        }
-        body::before {
-            content: "NM"; position: fixed; bottom: -30px; right: -10px; font-size: 32vw; font-weight: 900;
-            color: rgba(138, 43, 226, 0.02); z-index: -1; pointer-events: none; font-family: 'Impact', sans-serif;
-        }
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;
-            background: rgba(7, 3, 18, 0.8); border-bottom: 1px solid rgba(138, 43, 226, 0.2);
-        }
+        body { background: var(--mesh-gradient); color: var(--text-main); min-height: 100vh; position: relative; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(3, 1, 7, 0.9); border-bottom: 1px solid rgba(226, 64, 251, 0.2); }
         .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 25px; font-weight: 600; }
-        .workspace { max-width: 900px; margin: 40px auto; padding: 30px; background: rgba(20, 11, 38, 0.6); border-radius: 16px; border: 1px solid rgba(138, 43, 226, 0.2); }
-        .control-panel { background: rgba(0,0,0,0.3); padding: 25px; border-radius: 12px; margin-top: 20px; border: 1px dashed rgba(138,43,226,0.3); }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: bold; margin-bottom: 8px; color: var(--accent-glow); font-size: 0.9rem; text-transform: uppercase; }
-        textarea, input[type="text"] { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid rgba(138,43,226,0.3); border-radius: 8px; color: white; }
-        .btn-trigger { width: 100%; padding: 16px; background: linear-gradient(90deg, #ff79c6, var(--accent-purple)); border: none; border-radius: 8px; color: white; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .style-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 15px; }
-        .style-btn { padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(138,43,226,0.2); color: white; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        .style-btn.active { background: var(--accent-purple); border-color: var(--accent-glow); }
-        .video-box { width: 100%; position: relative; margin-top: 20px; border-radius: 12px; overflow: hidden; display: none; border: 1px solid var(--accent-glow); }
-        video { width: 100%; display: block; }
-        .subtitles-layer { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 85%; text-align: center; color: white; font-size: 1.8rem; font-weight: 900; text-shadow: 0 4px 12px #000; font-family: 'Impact', sans-serif; pointer-events: none; letter-spacing: 1px; text-transform: uppercase; }
-        .status { padding: 15px; text-align: center; font-weight: bold; background: rgba(255,255,255,0.05); border-radius: 8px; margin-top: 15px; }
+        .lab-workspace { max-width: 900px; margin: 40px auto; padding: 30px; background: var(--glass-box); border-radius: 20px; border: 1px solid rgba(224, 64, 251, 0.15); box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        h2 { font-weight: 800; letter-spacing: 1px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px; }
+        input[type="text"], select, textarea { width: 100%; padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(224,64,251,0.25); border-radius: 10px; color: white; font-size: 1rem; outline: none; transition: 0.3s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--neon-magenta); box-shadow: 0 0 12px rgba(224,64,251,0.4); }
+        .btn-pulse { padding: 16px 35px; background: linear-gradient(90deg, #e040fb, #7b1fa2); border: none; color: white; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 20px rgba(224,64,251,0.4); font-size: 1.05rem; width: 100%; transition: 0.3s; }
+        .btn-pulse:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(224,64,251,0.7); }
+        .style-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 15px; }
+        .style-chip { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: 0.2s; }
+        .style-chip.active { background: rgba(224,64,251,0.2); border-color: var(--neon-magenta); color: #fff; text-shadow: 0 0 5px var(--neon-magenta); }
+        .remix-panel { border-left: 3px dashed var(--neon-magenta); padding-left: 20px; background: rgba(224,64,251,0.02); padding: 20px; border-radius: 0 12px 12px 0; margin-top: 15px; }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <h2 style="color: #ff79c6; font-weight:800;">NM STUDIO</h2>
-        <div class="nav-links">
-            <a href="dashboard.html">Dashboard</a>
-            <a href="generate.html" style="color: var(--accent-glow);">AI Workshop</a>
-            <a href="library.html">Vault Nodes</a>
-        </div>
+        <h2 style="color: #e040fb; font-weight: 800;">NM LAB </h2>
+        <div class="nav-links"><a href="dashboard.html">Dashboard</a><a href="generate.html" style="color: var(--neon-magenta)">Audio Lab</a><a href="video.html">Visual Compiler</a><a href="library.html">Vault Nodes</a></div>
     </nav>
 
-    <div class="workspace">
-        <h2 style="color: #fff;"> Neural Synthesis Terminal</h2>
-        <p style="color: var(--text-muted); margin-bottom: 25px;">Udio Music Generation & Automated Pexels Cinematic Pipeline</p>
-
-        <div class="form-group">
-            <label>Select Aesthetic Element Structure</label>
-            <div class="style-grid" id="styleGrid">
-                <button class="style-btn active" data-style="phonk">PHONK </button>
-                <button class="style-btn" data-style="trap">TRAP</button>
-                <button class="style-btn" data-style="lo-fi">LO-FI</button>
-                <button class="style-btn" data-style="drift">DRIFT PHONK</button>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Acoustic Audio Prompt Descriptor</label>
-            <textarea id="audioPrompt" rows="3" placeholder="Describe the atmosphere... (e.g., Aggressive high-intensity phonk with deep distortion base loops)"></textarea>
-        </div>
-
-        <div class="control-panel">
-            <h3 style="color: var(--accent-glow); margin-bottom: 15px;"> Visual Synthesizer Config</h3>
-            <div class="form-group">
-                <label>Cinematic Video Reference Stream Prompt</label>
-                <input type="text" id="videoPrompt" placeholder="e.g., Tokyo street race night drift loop, purple glowing ambiance">
-            </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="lyricsToggle" checked style="cursor: pointer;">
-                <label for="lyricsToggle" style="margin-bottom:0; text-transform:none;">Render Synchronized Dynamic Lyrics Subtitles onto final video</label>
-            </div>
-        </div>
-
-        <button class="btn-trigger" id="masterTrigger" onclick="startMatrixPipeline()" style="margin-top: 25px;"> TRIGGER MATRIX PIPELINE</button>
-
-        <div id="loader" class="status" style="display: none; color: var(--accent-glow);"> PROCESSING NEURAL ARCHITECTURE SIGNAL MAPS... PLEASE STAND BY.</div>
+    <div class="lab-workspace">
+        <h2 style="color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px;"> MULTI-MATRIX AUDIO CORE DESK</h2>
         
-        <div id="matrixOutput" style="display: none; margin-top:25px;">
-            <h3 style="color:#4ade80; margin-bottom:15px;"> Neural Sequence Synthesis Terminated Successfully</h3>
-            <audio id="audioSource" controls style="width: 100%; margin-bottom: 20px;"></audio>
-            
-            <div class="video-box" id="vFrame">
-                <video id="vPlayer" loop muted playsinline></video>
-                <div class="subtitles-layer" id="lyricsLayer"></div>
-            </div>
+        <div class="form-group">
+            <label>1. Define Structural Track Prompt</label>
+            <input type="text" id="audioPrompt" placeholder="Describe the sonic parameters (e.g. Aggressive drift bass, fast hard-hitting hi-hats, ultra distorted melody)...">
+        </div>
 
-            <button class="btn-trigger" style="background:var(--accent-purple); margin-top:20px;" onclick="commitToVault()"> COMMIT TO SECURED VAULT NODE</button>
+        <div class="form-group">
+            <label>2. Core Style Preset Engine Matrix</label>
+            <div class="style-grid" id="stylePresets">
+                <div class="style-chip active" onclick="selectStyle('phonk')">Drift Phonk</div>
+                <div class="style-chip" onclick="selectStyle('hardstyle')">Hardstyle</div>
+                <div class="style-chip" onclick="selectStyle('cyberpunk')">Cyber-Synth</div>
+                <div class="style-chip" onclick="selectStyle('lofi')">Chill Lofi</div>
+                <div class="style-chip" onclick="selectStyle('hiphop')">BoomBap Rap</div>
+                <div class="style-chip" onclick="selectStyle('edm')">Trap Pulse</div>
+                <div class="style-chip" onclick="selectStyle('ai-guided')"> AI Decides</div>
+                <div class="style-chip" onclick="selectStyle('custom')"> Self Script</div>
+            </div>
+            <input type="text" id="customStyle" placeholder="Type custom style array mechanics..." style="display: none; margin-top: 10px;">
+        </div>
+
+        <div class="form-group">
+            <label>3. Vocal & Lyrics Architecture Engine</label>
+            <select id="lyricsMode" onchange="toggleLyricsInput()">
+                <option value="auto">Auto Synthesized Intelligent AI Vocals</option>
+                <option value="custom">Self-Writing Sandbox Lyrics Panel</option>
+                <option value="instrumental">Pure Instrumental - Raw Digital Waveforms</option>
+            </select>
+            <textarea id="customLyricsText" rows="4" placeholder="Paste or type your customized vocal verses here..." style="display: none; margin-top:12px; resize: none;"></textarea>
+        </div>
+
+        <div class="form-group">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <input type="checkbox" id="stitchingToggle" onchange="toggleRemixPanel()" style="width:18px; height:18px; cursor:pointer;">
+                <label for="stitchingToggle" style="margin-bottom:0; cursor:pointer;">Activate Laboratory Multi-Song Remix Stitcher Loop</label>
+            </div>
+            
+            <div class="remix-panel" id="remixPanel" style="display:none;">
+                <label>Secondary Layer/Song Node Integration Input</label>
+                <input type="text" id="secondaryTrackInput" placeholder="Enter secondary target song URL or theme signature prompt..." style="margin-bottom:12px;">
+                
+                <label>Remix Cross-Fade Intensity Blend</label>
+                <select id="remixIntensity">
+                    <option value="low">Subtle Harmonic Undertone Fusion (10%)</option>
+                    <option value="medium" selected>Balanced Matrix Mashup Equalizer (50%)</option>
+                    <option value="high">Total Chaotic Reconstruction Metamorphosis (100%)</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn-pulse" id="genAudioBtn" onclick="runAudioGenerationSequence()"> INJECT CORE MIX SPECIFICATION</button>
+
+        <div id="loadingPulse" style="display: none; margin-top: 20px; text-align: center; color: var(--neon-cyan); font-weight: bold;">
+             Compiling audio matrix configurations... Please wait.
+        </div>
+
+        <div id="audioOutputBox" style="display: none; margin-top: 30px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid rgba(224,64,251,0.2);">
+            <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">Output Node Generation Complete</h4>
+            <audio id="audioPlaybackNode" controls></audio>
+            <button class="btn-pulse" style="margin-top: 15px; background: #00e5ff; color: black;" onclick="commitAudioToCache()"> SAVE COMPILATION TO LOCAL STORAGE DATABASE</button>
         </div>
     </div>
 
     <script>
+        // Firebase initialization variables
         const firebaseConfig = {
             apiKey: "AIzaSyBKnHWUPiNMzvVTYmVMrB9Zs9iliCyr-rY",
             authDomain: "namo-music-479ce.firebaseapp.com",
             databaseURL: "https://namo-music-479ce-default-rtdb.firebaseio.com",
             projectId: "namo-music-479ce",
-            storageBucket: "namo-music-479ce.firebasestorage.app",
-            messagingSenderId: "405808324789",
-            appId: "1:405808324789:web:4e857029243c84902b5efc",
-            measurementId: "G-4GTSW2PRPJ"
+            storageBucket: "namo-music-479ce.firebasestorage.app"
         };
         firebase.initializeApp(firebaseConfig);
 
-        const PEXELS_KEY = "5307c1e0854f00000100000305f88572b9a147e8b61c9ecba5a31e13";
-        let activeStyle = 'phonk';
-        let operationResult = null;
+        const user = JSON.parse(localStorage.getItem('phonkCurrentUser'));
+        let selectedPresetStyle = 'phonk';
+        let freshlyGeneratedTrack = null;
 
-        const uStr = localStorage.getItem('phonkCurrentUser');
-        if(!uStr) window.location.href = 'index.html';
-        const user = JSON.parse(uStr);
+        function selectStyle(st) {
+            selectedPresetStyle = st;
+            document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('customStyle').style.display = st === 'custom' ? 'block' : 'none';
+        }
 
-        document.getElementById('styleGrid').addEventListener('click', (e) => {
-            if(e.target.classList.contains('style-btn')) {
-                document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                activeStyle = e.target.getAttribute('data-style');
-            }
-        });
+        function toggleLyricsInput() {
+            const m = document.getElementById('lyricsMode').value;
+            document.getElementById('customLyricsText').style.display = m === 'custom' ? 'block' : 'none';
+        }
 
-        async function startMatrixPipeline() {
+        function toggleRemixPanel() {
+            document.getElementById('remixPanel').style.display = document.getElementById('stitchingToggle').checked ? 'block' : 'none';
+        }
+
+        async function runAudioGenerationSequence() {
             const prompt = document.getElementById('audioPrompt').value.trim();
-            if(!prompt) { alert('Prompt input matrix blank!'); return; }
+            if(!prompt) { alert('Prompt is empty inside the configuration deck!'); return; }
 
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('matrixOutput').style.display = 'none';
+            document.getElementById('loadingPulse').style.display = 'block';
+            document.getElementById('audioOutputBox').style.display = 'none';
+            document.getElementById('genAudioBtn').disabled = true;
 
             try {
-                const response = await fetch('/generate', {
+                const res = await fetch('/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: prompt, style: activeStyle })
-                });
-                const data = await response.json();
-
-                if(data.success || data.audio_url) {
-                    operationResult = {
-                        title: prompt.substring(0, 30) + '...',
-                        style: activeStyle,
+                    body: JSON.stringify({
                         prompt: prompt,
-                        audioUrl: data.audio_url,
-                        created: Date.now()
-                    };
-
-                    document.getElementById('audioSource').src = data.audio_url;
-                    document.getElementById('matrixOutput').style.display = 'block';
-                    document.getElementById('audioSource').play();
-
-                    await syncVisualStream();
-                } else { alert('Pipeline configuration break.'); }
-            } catch(e) { alert('Core error: ' + e.message); }
-            finally { document.getElementById('loader').style.display = 'none'; }
-        }
-
-        async function syncVisualStream() {
-            const query = document.getElementById('videoPrompt').value.trim() || `${activeStyle} dark neon car`;
-            try {
-                const res = await fetch(`https://api.pexels.com/videos/search?query=${encodeURIComponent(query)}&per_page=1`, {
-                    headers: { 'Authorization': PEXELS_KEY }
+                        style: selectedPresetStyle === 'ai-guided' ? 'AI Optimized Beat' : selectedPresetStyle,
+                        custom_style: document.getElementById('customStyle').value,
+                        lyrics_mode: document.getElementById('lyricsMode').value,
+                        custom_lyrics: document.getElementById('customLyricsText').value,
+                        stitching_enabled: document.getElementById('stitchingToggle').checked,
+                        secondary_track: document.getElementById('secondaryTrackInput').value,
+                        remix_intensity: document.getElementById('remixIntensity').value
+                    })
                 });
-                const vData = await res.json();
-                if(vData.videos && vData.videos.length > 0) {
-                    const srcLink = vData.videos[0].video_files.find(f => f.quality === 'hd' || f.quality === 'sd').link;
-                    const vp = document.getElementById('vPlayer');
-                    vp.src = srcLink;
-                    document.getElementById('vFrame').style.display = 'block';
-                    vp.play();
+                const data = await res.json();
+                
+                freshlyGeneratedTrack = {
+                    title: data.title || prompt.substring(0, 25) + '... (Mix Node)',
+                    style: data.style || selectedPresetStyle,
+                    prompt: prompt,
+                    audioUrl: data.audio_url || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+                    created: Date.now()
+                };
 
-                    if(document.getElementById('lyricsToggle').checked) {
-                        triggerSubtitleEngine();
-                    }
-                }
-            } catch(err) { console.log('Visual layer mismatch loop skipped.'); }
+                document.getElementById('audioPlaybackNode').src = freshlyGeneratedTrack.audioUrl;
+                document.getElementById('audioOutputBox').style.display = 'block';
+            } catch(e) {
+                alert('Lab Matrix Pipeline Communication error: ' + e.message);
+            } finally {
+                document.getElementById('loadingPulse').style.display = 'none';
+                document.getElementById('genAudioBtn').disabled = false;
+            }
         }
 
-        function triggerSubtitleEngine() {
-            const scripts = [" NAMO MUSIC CORE TRIGGERED ", " DISTORTED GRADIENT BASS ONLINE ", " DRIFT SIGNAL GENERATION SYNCED "];
-            const layer = document.getElementById('lyricsLayer');
-            let idx = 0; layer.textContent = scripts[0];
-            setInterval(() => {
-                idx = (idx + 1) % scripts.length;
-                layer.textContent = scripts[idx];
-            }, 3500);
-        }
-
-        function commitToVault() {
-            if(!operationResult) return;
+        function commitAudioToCache() {
+            if(!freshlyGeneratedTrack) return;
             if(!user.tracks) user.tracks = [];
-            user.tracks.push(operationResult);
-            
+            user.tracks.push(freshlyGeneratedTrack);
             localStorage.setItem('phonkCurrentUser', JSON.stringify(user));
             firebase.database().ref('vault_users/' + user.username).set(user);
-            alert(' Track Logged and Synced into Cloud Architecture Node Repository!');
-            window.location.href = 'library.html';
+            alert(' Track successfully injected into Database Vault Node Registry!');
+            window.location.href = 'video.html';
         }
     </script>
 </body>

@@ -1,4 +1,3 @@
-
 {
   "version": 2,
   "builds": [
@@ -14,6 +13,10 @@
   "routes": [
     {
       "src": "/generate",
+      "dest": "app.py"
+    },
+    {
+      "src": "/create-video",
       "dest": "app.py"
     },
     {
