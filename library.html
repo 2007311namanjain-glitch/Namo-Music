@@ -3,72 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NM Studio - Secure Vault Nodes</title>
+    <title>Namo Music Lab – Saved Library</title>
     <style>
         :root {
-            --bg-main: #04010a;
-            --accent-purple: #7b1fa2;
-            --accent-glow: #e040fb;
-            --text-main: #f5f6fa;
-            --text-muted: #a29bfe;
+            --bg-main:#04010a;
+            --accent-purple:#7b1fa2;
+            --accent-glow:#e040fb;
+            --accent-blue:#00e5ff;
+            --text-main:#f5f6fa;
+            --text-muted:#a29bfe;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: linear-gradient(135deg, var(--bg-main) 0%, #0d041a 60%, #1a0833 100%); color: var(--text-main); min-height: 100vh; position: relative; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(4, 1, 10, 0.9); border-bottom: 1px solid rgba(224, 64, 251, 0.2); }
-        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 25px; font-weight: 600; }
-        .vault-container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-        .grid-system { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-        .node-card { background: rgba(20, 11, 38, 0.6); border: 1px solid rgba(224,64,251,0.15); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; transition: 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .node-card:hover { border-color: var(--accent-glow); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(123,31,162,0.4); }
-        .card-meta { display: flex; gap: 8px; margin: 12px 0; }
-        .tag { font-size: 0.75rem; padding: 4px 10px; border-radius: 30px; font-weight: bold; text-transform: uppercase; }
-        .tag-style { background: rgba(224,64,251,0.15); color: var(--accent-glow); border: 1px solid rgba(224,64,251,0.3); }
-        .tag-device { background: rgba(0, 229, 255, 0.15); color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.3); }
-        audio { width: 100%; margin-top: 15px; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; font-size: 0.8rem; color: var(--text-muted); }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        body { background: radial-gradient(circle at 50% 20%, #140930, var(--bg-main) 70%); color:var(--text-main); min-height:100vh; }
+        
+        .navbar { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:rgba(4,1,10,0.85); border-bottom:1px solid rgba(224,64,251,0.2); }
+        .brand-logo-nav { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .logo-box-nav { background: linear-gradient(135deg, var(--accent-glow), var(--accent-blue)); padding: 4px 10px; border-radius: 8px; font-weight: 900; font-size: 1.3rem; color: #000; }
+        .logo-title-nav { font-size: 1.4rem; font-weight: 800; color: #fff; }
+
+        .nav-links { display:flex; align-items:center; gap:20px; }
+        .nav-links a { color:var(--text-muted); text-decoration:none; font-weight:600; transition:0.3s; }
+        .nav-links a:hover, .nav-links a.active { color:var(--accent-glow); }
+        .hamburger { display:none; font-size:1.8rem; cursor:pointer; color:var(--text-main); background:none; border:none; }
+        
+        .container { max-width:1100px; margin:40px auto; padding:0 20px; }
+        h1 { font-size: 2rem; font-weight: 800; margin-bottom: 25px; display:flex; align-items:center; gap:10px; }
+        
+        .tabs { display:flex; gap:10px; margin-bottom:30px; border-bottom:1px solid rgba(224,64,251,0.15); flex-wrap:wrap; }
+        .tab-btn { background:none; border:none; color:var(--text-muted); padding:12px 24px; font-weight:600; cursor:pointer; border-bottom:3px solid transparent; transition:0.3s; font-size:1rem; }
+        .tab-btn.active { color:var(--accent-blue); border-bottom-color:var(--accent-blue); }
+        
+        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:20px; }
+        .card { background:rgba(20,11,38,0.4); border:1px solid rgba(224,64,251,0.1); border-radius:16px; padding:25px; transition:0.3s; }
+        .card:hover { border-color:var(--accent-glow); transform:translateY(-3px); background:rgba(20,11,38,0.6); }
+        .card h4 { font-size:1.15rem; margin-bottom:8px; color:#fff; }
+        audio, video { width:100%; margin-top:15px; border-radius:8px; }
+        .tag { display:inline-block; padding:3px 12px; border-radius:30px; font-size:0.75rem; background:rgba(0,229,255,0.15); color:var(--accent-blue); font-weight:600; margin-top:5px; }
+        
+        .footer { text-align:center; padding:30px; border-top:1px solid rgba(224,64,251,0.15); color:var(--text-muted); margin-top:60px; font-size:0.9rem; }
+        .footer a { color:var(--accent-glow); text-decoration:none; }
+
+        @media (max-width:768px) {
+            .nav-links { display:none; flex-direction:column; width:100%; background:rgba(11,6,22,0.95); padding:20px; position:absolute; top:65px; left:0; border-bottom:1px solid rgba(224,64,251,0.2); z-index:999; }
+            .nav-links.active { display:flex; }
+            .hamburger { display:block; }
+        }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <h2 style="color: #e040fb; font-weight:800;">NM VAULT </h2>
-        <div class="nav-links"><a href="dashboard.html">Dashboard</a><a href="generate.html">Audio Lab</a><a href="video.html">Visual Compiler</a><a href="library.html" style="color: var(--accent-glow)">Vault Nodes</a></div>
+        <a href="dashboard.html" class="brand-logo-nav">
+            <div class="logo-box-nav">NM</div>
+            <div class="logo-title-nav">Namo Music Lab</div>
+        </a>
+        <button class="hamburger" onclick="toggleMenu()"></button>
+        <div class="nav-links" id="navLinks">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="generate.html">Audio Lab</a>
+            <a href="video.html">Video Lab</a>
+            <a href="library.html" class="active">Library</a>
+            <a href="index.html" onclick="localStorage.removeItem('phonkCurrentUser')" style="color:#ff5252;">Logout</a>
+        </div>
     </nav>
 
-    <div class="vault-container">
-        <h2 style="margin-bottom: 35px; color: #fff; font-weight: 800; letter-spacing: 1px;"> SECURED ENCRYPTED CLOUD VAULT NODES</h2>
-        <div id="vaultGrid"></div>
+    <div class="container">
+        <h1> Your Saved Library</h1>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tracks')">Tracks</button>
+            <button class="tab-btn" onclick="switchTab('videos')">Videos</button>
+        </div>
+        <div id="contentGrid">
+            <p style="color:var(--text-muted);">Select a tab to display your personal creation logs.</p>
+        </div>
     </div>
 
-    <script>
-        const uStr = localStorage.getItem('phonkCurrentUser');
-        const user = JSON.parse(uStr);
-        const container = document.getElementById('vaultGrid');
-        const tracks = user.tracks || [];
+    <footer class="footer">
+        <p>Support: <a href="mailto:namo.music.lab@gmail.com">namo.music.lab@gmail.com</a> | © 2026 Namo Music Lab</p>
+    </footer>
 
-        if(tracks.length === 0) {
-            container.innerHTML = `<p style="text-align:center; padding:40px; color:var(--text-muted); font-style:italic;">No commit nodes initialized inside your cloud framework database serverless logs.</p>`;
-        } else {
-            let html = '<div class="grid-system">';
-            tracks.forEach(t => {
-                html += `
-                    <div class="node-card">
-                        <div>
-                            <h3 style="color:#fff; font-size:1.25rem; font-weight:700;"> ${t.title}</h3>
-                            <div class="card-meta">
-                                <span class="tag tag-style">${t.style}</span>
-                                <span class="tag tag-device">Live Vault Sync</span>
-                            </div>
-                            <p style="font-size:0.85rem; color:var(--text-muted); line-height:1.4; font-style:italic;">"${t.prompt}"</p>
-                        </div>
-                        <audio controls src="${t.audioUrl}"></audio>
-                        <div class="card-footer">
-                            <span>Deployed: ${new Date(t.created).toLocaleDateString('en-IN')}</span>
-                            <span style="color:#e040fb; font-weight:bold; letter-spacing:1px;">© NM RESERVED</span>
-                        </div>
-                    </div>`;
-            });
-            html += '</div>';
-            container.innerHTML = html;
+    <script>
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            const target = document.getElementById('contentGrid');
+            target.innerHTML = `<p style="color:var(--text-muted);">No saved ${type} detected in this temporary segment.</p>`;
         }
     </script>
 </body>

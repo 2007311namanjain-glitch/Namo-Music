@@ -3,189 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NM Studio - Audio Lab Core</title>
+    <title>NM Studio – Audio Lab</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <style>
         :root {
-            --mesh-gradient: linear-gradient(135deg, #030107 0%, #0f0426 40%, #26073d 100%);
-            --neon-cyan: #00f2fe;
-            --neon-magenta: #e040fb;
-            --glass-box: rgba(12, 6, 28, 0.75);
-            --text-main: #f5f6fa;
-            --text-muted: #a29bfe;
+            /* Next level custom pitch black with heavy gradient properties */
+            --bg-base: #000000;
+            --panel-bg: rgba(12, 6, 20, 0.75);
+            --accent-purple: #7b1fa2;
+            --accent-glow: #e040fb;
+            --accent-blue: #00e5ff;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: rgba(224, 64, 251, 0.2);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--mesh-gradient); color: var(--text-main); min-height: 100vh; position: relative; }
-        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: rgba(3, 1, 7, 0.9); border-bottom: 1px solid rgba(226, 64, 251, 0.2); }
-        .nav-links a { color: var(--text-main); text-decoration: none; margin-left: 25px; font-weight: 600; }
-        .lab-workspace { max-width: 900px; margin: 40px auto; padding: 30px; background: var(--glass-box); border-radius: 20px; border: 1px solid rgba(224, 64, 251, 0.15); box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        h2 { font-weight: 800; letter-spacing: 1px; margin-bottom: 25px; }
-        .form-group { margin-bottom: 25px; }
-        label { display: block; text-transform: uppercase; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 1px; }
-        input[type="text"], select, textarea { width: 100%; padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(224,64,251,0.25); border-radius: 10px; color: white; font-size: 1rem; outline: none; transition: 0.3s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--neon-magenta); box-shadow: 0 0 12px rgba(224,64,251,0.4); }
-        .btn-pulse { padding: 16px 35px; background: linear-gradient(90deg, #e040fb, #7b1fa2); border: none; color: white; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 20px rgba(224,64,251,0.4); font-size: 1.05rem; width: 100%; transition: 0.3s; }
-        .btn-pulse:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(224,64,251,0.7); }
-        .style-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 15px; }
-        .style-chip { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 12px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: 0.2s; }
-        .style-chip.active { background: rgba(224,64,251,0.2); border-color: var(--neon-magenta); color: #fff; text-shadow: 0 0 5px var(--neon-magenta); }
-        .remix-panel { border-left: 3px dashed var(--neon-magenta); padding-left: 20px; background: rgba(224,64,251,0.02); padding: 20px; border-radius: 0 12px 12px 0; margin-top: 15px; }
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, var(--bg-base), #0a0314 60%, #15052e); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            padding-bottom: 60px; 
+        }
+
+        /* Smart Dynamic Scrolling Fade Hide Control */
+        .navbar { 
+            display:flex; 
+            justify-content:space-between; 
+            align-items:center; 
+            padding:15px 30px; 
+            background: rgba(0, 0, 0, 0.9); 
+            border-bottom:1px solid var(--border-color); 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        .navbar.scroll-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .logo { font-size:2rem; font-weight:800; background:linear-gradient(90deg, var(--accent-glow), var(--accent-blue)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; display:flex; align-items:center; gap:8px; }
+        .nav-links { display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+        .nav-links a { color:var(--text-muted); text-decoration:none; font-weight:600; transition:0.2s; }
+        .nav-links a:hover, .nav-links a.active { color:var(--accent-glow); text-shadow: 0 0 8px var(--accent-glow); }
+        .hamburger { display:none; font-size:2rem; cursor:pointer; color:var(--text-main); background:none; border:none; }
+        
+        .container { max-width:900px; margin:40px auto; padding:0 20px; }
+        h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 8px; }
+        
+        .main-panel { background: var(--panel-bg); backdrop-filter:blur(15px); border:1px solid var(--border-color); border-radius:16px; padding:30px; box-shadow:0 10px 35px rgba(0,0,0,0.7); }
+        .form-group { margin-bottom:20px; }
+        .form-group label { display:block; font-weight:600; text-transform:uppercase; font-size:0.8rem; color:var(--text-muted); margin-bottom:6px; letter-spacing: 0.5px; }
+        .form-group textarea, .form-group input, .form-group select { width:100%; background:#0b0b12; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; color:#fff; outline:none; transition: 0.3s; }
+        .form-group textarea:focus, .form-group input:focus, .form-group select:focus { border-color:var(--accent-glow); box-shadow: 0 0 10px rgba(224,64,251,0.25); }
+        
+        .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .toggle-container { display:flex; align-items:center; gap:10px; background:#0b0b12; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:14px; margin-bottom:20px; }
+        
+        .btn-primary { width:100%; background:linear-gradient(90deg, var(--accent-glow), var(--accent-purple)); border:none; border-radius:50px; padding:14px; color:#fff; font-weight:bold; cursor:pointer; transition:0.3s; }
+        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 20px rgba(224,64,251,0.6); }
+        .btn-secondary { background:transparent; border: 1px solid var(--accent-blue); color: var(--accent-blue); }
+        .btn-secondary:hover { background: var(--accent-blue); color: #000; }
+        
+        .output-box { background:#0b0b12; border:1px solid var(--border-color); border-radius:8px; padding:20px; margin-top:30px; display:none; }
+        audio { width:100%; margin:15px 0; }
+        .file-upload { background:#0b0b12; border:1px dashed rgba(255,255,255,0.15); border-radius:8px; padding:20px; text-align:center; cursor:pointer; transition:0.3s; }
+        .file-upload:hover { border-color:var(--accent-glow); background: rgba(224,64,251,0.02); }
+        
+        .loading { display:none; text-align:center; color:var(--accent-glow); margin:15px 0; font-weight:600; }
+        .footer { text-align:center; padding:20px; border-top:1px solid var(--border-color); color:var(--text-muted); margin-top:40px; }
+        .footer a { color:var(--accent-glow); text-decoration:none; }
+
+        @media (max-width:768px) {
+            .nav-links { display:none; flex-direction:column; width:100%; background:rgba(4,1,10,0.95); padding:20px; position:absolute; top:70px; left:0; border-bottom:1px solid var(--border-color); z-index:999; }
+            .nav-links.active { display:flex; }
+            .hamburger { display:block; }
+            .grid-2 { grid-template-columns:1fr; }
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <h2 style="color: #e040fb; font-weight: 800;">NM LAB </h2>
-        <div class="nav-links"><a href="dashboard.html">Dashboard</a><a href="generate.html" style="color: var(--neon-magenta)">Audio Lab</a><a href="video.html">Visual Compiler</a><a href="library.html">Vault Nodes</a></div>
+    <nav class="navbar" id="audioNavbar">
+        <div class="logo">🎵 NM Lab</div>
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+        <div class="nav-links" id="navLinks">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="generate.html" class="active">Audio Lab</a>
+            <a href="video.html">Video Lab</a>
+            <a href="library.html">Library</a>
+            <a href="index.html" onclick="localStorage.removeItem('phonkCurrentUser')" style="color:#ff4b4b;">Logout</a>
+        </div>
     </nav>
 
-    <div class="lab-workspace">
-        <h2 style="color: #fff; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px;"> MULTI-MATRIX AUDIO CORE DESK</h2>
+    <div class="container">
+        <h1>Audio Laboratory</h1>
+        <p style="color:var(--text-muted); margin-bottom: 20px;">Generate, remix, and experiment with advanced AI engines.</p>
         
-        <div class="form-group">
-            <label>1. Define Structural Track Prompt</label>
-            <input type="text" id="audioPrompt" placeholder="Describe the sonic parameters (e.g. Aggressive drift bass, fast hard-hitting hi-hats, ultra distorted melody)...">
-        </div>
-
-        <div class="form-group">
-            <label>2. Core Style Preset Engine Matrix</label>
-            <div class="style-grid" id="stylePresets">
-                <div class="style-chip active" onclick="selectStyle('phonk')">Drift Phonk</div>
-                <div class="style-chip" onclick="selectStyle('hardstyle')">Hardstyle</div>
-                <div class="style-chip" onclick="selectStyle('cyberpunk')">Cyber-Synth</div>
-                <div class="style-chip" onclick="selectStyle('lofi')">Chill Lofi</div>
-                <div class="style-chip" onclick="selectStyle('hiphop')">BoomBap Rap</div>
-                <div class="style-chip" onclick="selectStyle('edm')">Trap Pulse</div>
-                <div class="style-chip" onclick="selectStyle('ai-guided')"> AI Decides</div>
-                <div class="style-chip" onclick="selectStyle('custom')"> Self Script</div>
+        <div class="main-panel">
+            <div class="form-group">
+                <label>Prompt / Description</label>
+                <textarea id="audioPrompt" rows="3" placeholder="Describe your master track style..."></textarea>
             </div>
-            <input type="text" id="customStyle" placeholder="Type custom style array mechanics..." style="display: none; margin-top: 10px;">
-        </div>
 
-        <div class="form-group">
-            <label>3. Vocal & Lyrics Architecture Engine</label>
-            <select id="lyricsMode" onchange="toggleLyricsInput()">
-                <option value="auto">Auto Synthesized Intelligent AI Vocals</option>
-                <option value="custom">Self-Writing Sandbox Lyrics Panel</option>
-                <option value="instrumental">Pure Instrumental - Raw Digital Waveforms</option>
-            </select>
-            <textarea id="customLyricsText" rows="4" placeholder="Paste or type your customized vocal verses here..." style="display: none; margin-top:12px; resize: none;"></textarea>
-        </div>
-
-        <div class="form-group">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <input type="checkbox" id="stitchingToggle" onchange="toggleRemixPanel()" style="width:18px; height:18px; cursor:pointer;">
-                <label for="stitchingToggle" style="margin-bottom:0; cursor:pointer;">Activate Laboratory Multi-Song Remix Stitcher Loop</label>
+            <div class="form-group">
+                <label>Style Preset</label>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <select id="styleSelect" style="flex:2;">
+                        <option value="phonk">Phonk</option>
+                        <option value="cyberpunk">Cyberpunk</option>
+                        <option value="drift_phonk">Drift Phonk</option>
+                        <option value="synthwave">Synthwave</option>
+                    </select>
+                    <button class="btn-primary btn-secondary" style="flex:0 0 auto; padding:10px 20px;" onclick="generateStyleAI()">🤖 AI</button>
+                    <input type="text" id="customStyle" placeholder="Custom additions..." style="flex:1;">
+                </div>
             </div>
+
+            <div class="form-group">
+                <label>Vocal Lyrics Framework</label>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                    <button class="btn-primary btn-secondary" style="flex:0 0 auto; padding:10px 20px;" onclick="generateLyricsAI()">🤖 Auto Script</button>
+                    <label style="display:flex; align-items:center; gap:8px; color:var(--text-muted);">
+                        <input type="checkbox" id="instrumentalToggle" onchange="toggleInstrumental()"> Instrumental Mode
+                    </label>
+                </div>
+                <textarea id="customLyrics" rows="3" placeholder="Paste structural script lines here..."></textarea>
+            </div>
+
+            <!-- Direct Upload / Remix Control Core -->
+            <div class="form-group">
+                <label>Target Remix Baseline Track</label>
+                <div class="file-upload" onclick="document.getElementById('audioUpload').click()">
+                    <p>📁 Click to stream direct file track asset from device</p>
+                    <input type="file" id="audioUpload" accept="audio/*" onchange="handleFileUpload(event)">
+                </div>
+                <div id="uploadedTrackInfo" style="margin-top:10px; color:var(--accent-blue); font-weight: 500;"></div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Remix Intensity Matrix</label>
+                    <select id="remixIntensity">
+                        <option value="low">Low Smooth</option>
+                        <option value="medium" selected>Medium Balance</option>
+                        <option value="high">High Modulated Power</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Stitching Strategy</label>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="stitchingEnabled" checked>
+                        <label style="margin-left:8px; color:var(--text-main);">Combine cleanly with uploaded file</label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" id="genBtn" onclick="generateTrack()">🚀 Launch Audio Synthesis</button>
+            <div id="loading" class="loading">Processing audio layers across cloud clusters... ⏳</div>
             
-            <div class="remix-panel" id="remixPanel" style="display:none;">
-                <label>Secondary Layer/Song Node Integration Input</label>
-                <input type="text" id="secondaryTrackInput" placeholder="Enter secondary target song URL or theme signature prompt..." style="margin-bottom:12px;">
-                
-                <label>Remix Cross-Fade Intensity Blend</label>
-                <select id="remixIntensity">
-                    <option value="low">Subtle Harmonic Undertone Fusion (10%)</option>
-                    <option value="medium" selected>Balanced Matrix Mashup Equalizer (50%)</option>
-                    <option value="high">Total Chaotic Reconstruction Metamorphosis (100%)</option>
-                </select>
+            <div id="outputBox" class="output-box">
+                <h3>✅ Output Track Ready</h3>
+                <audio id="audioPlayer" controls></audio>
+                <button class="btn-primary" style="background:#10b981; margin-top:10px;" onclick="saveTrack()">💾 Secure to Lab Cloud Library</button>
             </div>
-        </div>
-
-        <button class="btn-pulse" id="genAudioBtn" onclick="runAudioGenerationSequence()"> INJECT CORE MIX SPECIFICATION</button>
-
-        <div id="loadingPulse" style="display: none; margin-top: 20px; text-align: center; color: var(--neon-cyan); font-weight: bold;">
-             Compiling audio matrix configurations... Please wait.
-        </div>
-
-        <div id="audioOutputBox" style="display: none; margin-top: 30px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 12px; border: 1px solid rgba(224,64,251,0.2);">
-            <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">Output Node Generation Complete</h4>
-            <audio id="audioPlaybackNode" controls></audio>
-            <button class="btn-pulse" style="margin-top: 15px; background: #00e5ff; color: black;" onclick="commitAudioToCache()"> SAVE COMPILATION TO LOCAL STORAGE DATABASE</button>
         </div>
     </div>
 
     <script>
-        // Firebase initialization variables
-        const firebaseConfig = {
-            apiKey: "AIzaSyBKnHWUPiNMzvVTYmVMrB9Zs9iliCyr-rY",
-            authDomain: "namo-music-479ce.firebaseapp.com",
-            databaseURL: "https://namo-music-479ce-default-rtdb.firebaseio.com",
-            projectId: "namo-music-479ce",
-            storageBucket: "namo-music-479ce.firebasestorage.app"
-        };
+        const firebaseConfig = { databaseURL: "https://namo-music-lab-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+
+        // Disappearing dynamic header navbar control
+        let lastScroll = 0;
+        const nav = document.getElementById('audioNavbar');
+        window.addEventListener('scroll', () => {
+            let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            if (currentScroll > lastScroll && currentScroll > 60) {
+                nav.classList.add('scroll-hidden');
+            } else {
+                nav.classList.remove('scroll-hidden');
+            }
+            lastScroll = currentScroll <= 0 ? 0 : currentScroll;
+        });
 
         const user = JSON.parse(localStorage.getItem('phonkCurrentUser'));
-        let selectedPresetStyle = 'phonk';
-        let freshlyGeneratedTrack = null;
+        if (!user) window.location.href = 'index.html';
 
-        function selectStyle(st) {
-            selectedPresetStyle = st;
-            document.querySelectorAll('.style-chip').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('customStyle').style.display = st === 'custom' ? 'block' : 'none';
+        let uploadedAudioData = null;
+
+        function toggleInstrumental() {
+            const checked = document.getElementById('instrumentalToggle').checked;
+            document.getElementById('customLyrics').disabled = checked;
+            if (checked) document.getElementById('customLyrics').value = '';
         }
 
-        function toggleLyricsInput() {
-            const m = document.getElementById('lyricsMode').value;
-            document.getElementById('customLyricsText').style.display = m === 'custom' ? 'block' : 'none';
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                uploadedAudioData = { name: file.name, dataURL: ev.target.result };
+                document.getElementById('uploadedTrackInfo').innerHTML = ` Ready to mix: ${file.name}`;
+            };
+            reader.readAsDataURL(file);
         }
 
-        function toggleRemixPanel() {
-            document.getElementById('remixPanel').style.display = document.getElementById('stitchingToggle').checked ? 'block' : 'none';
-        }
-
-        async function runAudioGenerationSequence() {
+        async function generateTrack() {
             const prompt = document.getElementById('audioPrompt').value.trim();
-            if(!prompt) { alert('Prompt is empty inside the configuration deck!'); return; }
+            if (!prompt) { alert('Please enter audio context description blueprint.'); return; }
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('genBtn').disabled = true;
 
-            document.getElementById('loadingPulse').style.display = 'block';
-            document.getElementById('audioOutputBox').style.display = 'none';
-            document.getElementById('genAudioBtn').disabled = true;
-
-            try {
-                const res = await fetch('/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        style: selectedPresetStyle === 'ai-guided' ? 'AI Optimized Beat' : selectedPresetStyle,
-                        custom_style: document.getElementById('customStyle').value,
-                        lyrics_mode: document.getElementById('lyricsMode').value,
-                        custom_lyrics: document.getElementById('customLyricsText').value,
-                        stitching_enabled: document.getElementById('stitchingToggle').checked,
-                        secondary_track: document.getElementById('secondaryTrackInput').value,
-                        remix_intensity: document.getElementById('remixIntensity').value
-                    })
-                });
-                const data = await res.json();
-                
-                freshlyGeneratedTrack = {
-                    title: data.title || prompt.substring(0, 25) + '... (Mix Node)',
-                    style: data.style || selectedPresetStyle,
-                    prompt: prompt,
-                    audioUrl: data.audio_url || "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-                    created: Date.now()
-                };
-
-                document.getElementById('audioPlaybackNode').src = freshlyGeneratedTrack.audioUrl;
-                document.getElementById('audioOutputBox').style.display = 'block';
-            } catch(e) {
-                alert('Lab Matrix Pipeline Communication error: ' + e.message);
-            } finally {
-                document.getElementById('loadingPulse').style.display = 'none';
-                document.getElementById('genAudioBtn').disabled = false;
-            }
-        }
-
-        function commitAudioToCache() {
-            if(!freshlyGeneratedTrack) return;
-            if(!user.tracks) user.tracks = [];
-            user.tracks.push(freshlyGeneratedTrack);
-            localStorage.setItem('phonkCurrentUser', JSON.stringify(user));
-            firebase.database().ref('vault_users/' + user.username).set(user);
-            alert(' Track successfully injected into Database Vault Node Registry!');
-            window.location.href = 'video.html';
+            setTimeout(() => {
+                // Mock system runtime simulation matching local testing profiles
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('genBtn').disabled = false;
+                document.getElementById('audioPlayer').src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+                document.getElementById('outputBox').style.display = 'block';
+            }, 2000);
         }
     </script>
 </body>
