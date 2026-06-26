@@ -290,17 +290,15 @@
     statusLabel.innerHTML = " Securely connecting to Namo Music Lab Core Cloud Cluster...";
 
     try {
-        // Tumhara real backend serverless function call ho raha hai yahan
-        const response = await fetch('/api/generate-video', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                prompt: prompt,
-                duration: document.getElementById('videoDuration').value,
-                mode: document.getElementById('generationMode').value
-            })
-        });
-        
+    // video.html ke andar is line ko update karo:
+const response = await fetch('/api/generate-video.js', { // <-- .js extension lagao
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        prompt: prompt,
+        duration: document.getElementById('videoDuration').value
+    })
+});
         const data = await response.json();
         
         if(data.success && data.video_url) {
