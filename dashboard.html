@@ -18,7 +18,6 @@
         
         .navbar { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:rgba(4,1,10,0.85); border-bottom:1px solid rgba(224,64,251,0.2); position:relative; }
         
-        /* Custom Glowing Nav Text Logo */
         .brand-logo-nav { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .logo-box-nav { background: linear-gradient(135deg, var(--accent-glow), var(--accent-blue)); padding: 4px 10px; border-radius: 8px; font-weight: 900; font-size: 1.3rem; color: #000; }
         .logo-title-nav { font-size: 1.4rem; font-weight: 800; color: #fff; letter-spacing: 0.5px; }
@@ -26,7 +25,9 @@
         .nav-links { display:flex; align-items:center; gap:20px; }
         .nav-links a { color:var(--text-muted); text-decoration:none; font-weight:600; transition:0.3s; }
         .nav-links a:hover, .nav-links a.active { color:var(--accent-glow); }
-        .hamburger { display:none; font-size:1.8rem; cursor:pointer; color:var(--text-main); background:none; border:none; }
+        
+        /* Fixed & Glowing Hamburger */
+        .hamburger { display:none; font-size:2rem; cursor:pointer; color:var(--accent-glow); background:none; border:none; outline:none; font-weight:bold; }
         
         .container { max-width:1200px; margin:40px auto; padding:0 20px; }
         .welcome-card { background:rgba(20,11,38,0.5); backdrop-filter:blur(12px); border:1px solid rgba(224,64,251,0.15); border-radius:16px; padding:35px; position:relative; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
@@ -41,20 +42,26 @@
         .btn-primary { background:linear-gradient(90deg, #7b1fa2, #9c27b0); border:none; padding:14px 28px; border-radius:50px; color:#fff; font-weight:bold; cursor:pointer; transition:0.3s; }
         .btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 20px rgba(224,64,251,0.5); }
         
-        .section-title { font-size:1.4rem; font-weight:700; margin-bottom:20px; padding-left:12px; border-left:4px solid var(--accent-glow); }
+        .section-title { font-size:1.4rem; font-weight:700; margin:40px 0 20px 0; padding-left:12px; border-left:4px solid var(--accent-glow); }
         .track-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:20px; }
-        .track-card { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:22px; transition:0.3s; }
-        .track-card:hover { border-color:var(--accent-blue); transform:translateY(-2px); background:rgba(255,255,255,0.04); }
-        .track-card h4 { font-size:1.1rem; margin-bottom:6px; color:#fff; }
-        audio { width:100%; margin-top:15px; }
         
+        /* Upgraded Testimonial Form Panel */
+        .testimonial-panel { background: rgba(20,11,38,0.4); border: 1px solid rgba(0,229,255,0.2); border-radius: 16px; padding: 25px; margin-top: 30px; backdrop-filter: blur(10px); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+        .form-control { width: 100%; padding: 12px; background: #0b0b12; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; font-size: 1rem; }
+        .form-control:focus { border-color: var(--accent-blue); box-shadow: 0 0 10px rgba(0,225,255,0.2); }
+        textarea.form-control { resize: vertical; min-height: 80px; }
+        .btn-submit { background: linear-gradient(90deg, var(--accent-blue), #00b0ff); color: #000; border: none; padding: 12px 24px; border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 0 15px rgba(0,225,255,0.5); }
+
         .footer { text-align:center; padding:30px; border-top:1px solid rgba(224,64,251,0.15); color:var(--text-muted); margin-top:60px; font-size:0.9rem; }
         .footer a { color:var(--accent-glow); text-decoration:none; }
 
         @media (max-width:768px) {
-            .nav-links { display:none; flex-direction:column; width:100%; background:rgba(11,6,22,0.95); padding:20px; position:absolute; top:65px; left:0; border-bottom:1px solid rgba(224,64,251,0.2); z-index:999; }
-            .nav-links.active { display:flex; }
-            .hamburger { display:block; }
+            .nav-links { display:none; flex-direction:column; width:100%; background:rgba(11,6,22,0.95); padding:20px; position:absolute; top:65px; left:0; border-bottom:1px solid rgba(224,64,251,0.2); z-index:999; gap:15px; }
+            .nav-links.active { display:flex !important; }
+            .hamburger { display:block !important; }
         }
     </style>
 </head>
@@ -87,8 +94,19 @@
             <a href="library.html"><button class="btn-primary">📁 View Saved Library</button></a>
         </div>
 
+        <h3 class="section-title">Share Your Experience</h3>
+        <div class="testimonial-panel">
+            <div class="form-group">
+                <label>Write Your Testimonial / Feedback</label>
+                <textarea id="testimonialText" class="form-control" placeholder="Bhai, aapko ye platform kaisa laga? Apna experience share karein..."></textarea>
+            </div>
+            <button class="btn-submit" onclick="submitTestimonial()">Submit Testimonial</button>
+        </div>
+
         <h3 class="section-title">Your Recent Audio Beats</h3>
-        <div id="recentGrid"></div>
+        <div id="recentGrid">
+            <p style="color:var(--text-muted);">No tracks loaded yet. Create or check your library tab!</p>
+        </div>
     </div>
 
     <footer class="footer">
@@ -98,11 +116,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script>
-        const firebaseConfig = { databaseURL: "https://namo-music-lab-default-rtdb.firebaseio.com" }; // Setup placeholder
+        const firebaseConfig = { databaseURL: "https://namo-music-lab-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        function toggleMenu() { document.getElementById('navLinks').classList.toggle('active'); }
+        function toggleMenu() { 
+            document.getElementById('navLinks').classList.toggle('active'); 
+        }
 
         const uStr = localStorage.getItem('phonkCurrentUser');
         if (!uStr) window.location.href = 'index.html';
@@ -116,8 +136,29 @@
         
         document.getElementById('dynamicGreeting').innerHTML = `${localizedGreeting} <span>${user.username.toUpperCase()}</span>`;
 
-        const container = document.getElementById('recentGrid');
-        container.innerHTML = `<p style="color:var(--text-muted);">No tracks loaded yet. Create or check your library tab!</p>`;
+        // Function to process and store testimonial submissions
+        function submitTestimonial() {
+            const feedbackText = document.getElementById('testimonialText').value.trim();
+            if(!feedbackText) {
+                alert("Bhai, kuch likho toh sahi feedback box mein!");
+                return;
+            }
+            if(!user || !db) return;
+
+            db.ref(`testimonials`).push({
+                username: user.username,
+                userId: user.id || 'simulated_user_id',
+                feedback: feedbackText,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Thank you bhai! Aapka testimonial secure submit ho gaya hai.");
+                document.getElementById('testimonialText').value = '';
+            }).catch((err) => {
+                console.error(err);
+                alert("Database push failed. Ek baar network verify karein.");
+            });
+        }
     </script>
 </body>
 </html>
+
