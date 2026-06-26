@@ -275,62 +275,55 @@
                 return { api_target: 'luma_video_cluster', mode: 'pure_video' };
             }
         }
-
         async function executeVideoProcessing() {
-            const prompt = document.getElementById('videoPrompt').value.trim();
-            const duration = document.getElementById('videoDuration').value;
-            const mode = document.getElementById('generationMode').value;
-            const chosenAudioOverride = selectedAudioMode === 'library' ? selectElement.value : deviceAudioBase64;
+    const prompt = document.getElementById('videoPrompt').value.trim();
+    if(!prompt) { alert('Please enter your prompt concept blueprint.'); return; }
 
-            if(!prompt) { alert('Please enter your multi-layered vision details.'); return; }
+    const submitBtn = document.getElementById('generateVideoBtn');
+    const statusCard = document.getElementById('workflowStatus');
+    const statusLabel = document.getElementById('workflowStatusText');
+    const placeholder = document.getElementById('outputPlaceholder');
+    const outputBox = document.getElementById('outputContainer');
+    
+    submitBtn.disabled = true;
+    statusCard.style.display = "block";
+    statusLabel.innerHTML = " Securely connecting to Namo Music Lab Core Cloud Cluster...";
 
-            const submitBtn = document.getElementById('generateVideoBtn');
-            const statusCard = document.getElementById('workflowStatus');
-            const statusLabel = document.getElementById('workflowStatusText');
+    try {
+        // Tumhara real backend serverless function call ho raha hai yahan
+        const response = await fetch('/api/generate-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: prompt,
+                duration: document.getElementById('videoDuration').value,
+                mode: document.getElementById('generationMode').value
+            })
+        });
+        
+        const data = await response.json();
+        
+        if(data.success && data.video_url) {
+            finalOutputTargetUrl = data.video_url;
             
-            submitBtn.disabled = true;
-            statusCard.style.display = "block";
-            statusLabel.innerHTML = "Analyzing prompt intent layers & routing target API endpoints...";
-
-            const intentMetrics = parsePromptIntent(prompt);
-
-            const complexPayload = {
-                user_prompt: prompt,
-                target_duration: parseInt(duration),
-                theme_style: mode,
-                intent_detected: intentMetrics.mode,
-                trigger_api_type: intentMetrics.api_target,
-                sync_audio_video: true,
-                attached_override_audio: chosenAudioOverride || null,
-                reference_file_blob: referenceVisualBase64 || null
-            };
-
-            try {
-                const response = await fetch('/api/create-video', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(complexPayload)
-                });
-                const responseJson = await response.json();
-                
-                if(responseJson.success && responseJson.video_url) {
-                    finalOutputTargetUrl = responseJson.video_url;
-                } else {
-                    throw new Error("Pipeline route skipped.");
-                }
-            } catch(err) {
-                console.warn("API Node fallback active.", err);
-                statusLabel.innerHTML = `Triggered: [${intentMetrics.api_target.toUpperCase()}] -> Assembling clips down to ${duration}s total duration...`;
-                await new Promise(res => setTimeout(res, 4000));
-                finalOutputTargetUrl = "https://www.w3schools.com/html/mov_bbb.mp4";
-            } finally {
-                document.getElementById('studioVideoPlayer').src = finalOutputTargetUrl;
-                document.getElementById('outputPlaceholder').style.display = "none";
-                document.getElementById('outputContainer').style.display = "block";
-                statusLabel.innerHTML = "Production Complete! Ready full-length render active below.";
-                submitBtn.disabled = false;
-            }
+            // Elements ko real source URL se populate karna
+            document.getElementById('studioVideoPlayer').src = finalOutputTargetUrl;
+            placeholder.style.display = "none";
+            outputBox.style.display = "block";
+            
+            statusCard.style.borderLeftColor = "var(--success-neon)";
+            statusLabel.innerHTML = "<span style='color:var(--success-neon)'> Production Complete!</span> Real-time AI stream loaded to monitor display.";
+        } else {
+            throw new Error(data.error || "API Route returned an unsuccessful structure.");
         }
+    } catch(err) {
+        console.error("Pipeline failure: ", err);
+        statusCard.style.borderLeftColor = "#ff4b4b";
+        statusLabel.innerHTML = `<span style='color:#ff4b4b;'> Pipeline Interrupted:</span> ${err.message || 'Check your keys configuration panel.'}`;
+    } finally {
+        submitBtn.disabled = false;
+    }
+}
 
         function triggerMasterDownload() {
             if(!finalOutputTargetUrl) return;
