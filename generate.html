@@ -49,7 +49,7 @@
         .nav-links a { color:var(--text-muted); text-decoration:none; font-weight:600; transition:0.2s; }
         .nav-links a:hover, .nav-links a.active { color:var(--accent-glow); text-shadow: 0 0 8px var(--accent-glow); }
         
-        /* Fixed White Hamburger Controller Elements */
+        /* Fixed Safe White Hamburger Core Properties */
         .hamburger { 
             display:none; 
             font-size:2rem; 
@@ -58,6 +58,7 @@
             background:none; 
             border:none; 
             outline: none;
+            line-height: 1;
         }
         
         .container { max-width:900px; margin:40px auto; padding:0 20px; }
@@ -85,12 +86,11 @@
         .loading { display:none; text-align:center; color:var(--accent-glow); margin:15px 0; font-weight:600; }
         .footer { text-align:center; padding:20px; border-top:1px solid var(--border-color); color:var(--text-muted); margin-top:40px; font-size: 0.9rem; }
         .footer a { color:var(--accent-glow); text-decoration:none; font-weight: 600; }
-        .footer .support-email { color: var(--accent-blue); text-shadow: 0 0 5px rgba(0,229,255,0.2); }
 
         @media (max-width:768px) {
             .nav-links { display:none; flex-direction:column; width:100%; background:rgba(4,1,10,0.98); padding:20px; position:absolute; top:70px; left:0; border-bottom:1px solid var(--border-color); z-index:999; gap: 15px; }
             .nav-links.active { display:flex !important; }
-            .hamburger { display:block !important; color:#ffffff !important; }
+            .hamburger { display:block !important; }
             .grid-2 { grid-template-columns:1fr; }
         }
     </style>
@@ -98,7 +98,7 @@
 <body>
     <nav class="navbar" id="audioNavbar">
         <div class="logo"> NM Lab</div>
-        <button class="hamburger" onclick="toggleMenu()"></button>
+        <button class="hamburger" onclick="toggleMenu()">&#9776;</button>
         <div class="nav-links" id="navLinks">
             <a href="dashboard.html">Dashboard</a>
             <a href="generate.html" class="active">Audio Lab</a>
@@ -153,7 +153,7 @@
 
             <div class="grid-2">
                 <div class="form-group">
-                    -- <label>Remix Intensity Matrix</label>
+                    <label>Remix Intensity Matrix</label>
                     <select id="remixIntensity">
                         <option value="low">Low Smooth</option>
                         <option value="medium" selected>Medium Balance</option>
@@ -182,9 +182,10 @@
 
     <div class="footer">
         <p>© 2026 Namo Music Lab. All rights reserved.</p>
-        <p style="margin-top: 5px;">Need Assistance? Contact Support: <a class="support-email" href="mailto:namo.music.lab@gmail.com">namo.music.lab@gmail.com</a></p>
+        <p style="margin-top: 5px;">Need Assistance? Contact Support: <a style="color: var(--accent-blue);" href="mailto:namo.music.lab@gmail.com">namo.music.lab@gmail.com</a></p>
     </div>
-        <script>
+
+    <script>
         const firebaseConfig = { databaseURL: "https://namo-music-lab-default-rtdb.firebaseio.com" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -234,31 +235,11 @@
             document.getElementById('loading').style.display = 'block';
             document.getElementById('genBtn').disabled = true;
 
-            const containsVideoTerms = ['video', 'visual', 'clip', 'render', 'movie'].some(w => prompt.toLowerCase().includes(w));
-
-            const payload = {
-                audio_prompt: prompt,
-                style_preset: document.getElementById('styleSelect').value,
-                custom_style_tags: document.getElementById('customStyle').value,
-                is_instrumental: document.getElementById('instrumentalToggle').checked,
-                lyrics_framework: document.getElementById('customLyrics').value,
-                trigger_api_type: containsVideoTerms ? 'hybrid_sync_engine' : 'suno_audio_cluster'
-            };
-
             try {
-                const response = await fetch('/api/generate-audio', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const resData = await response.json();
-                if(resData.success) {
-                    document.getElementById('audioPlayer').src = resData.audioUrl;
-                } else { throw new Error(); }
-            } catch (err) {
-                console.warn("Fallback to offline simulation profile.");
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 document.getElementById('audioPlayer').src = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3";
+            } catch (err) {
+                console.error(err);
             } finally {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('genBtn').disabled = false;
